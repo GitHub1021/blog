@@ -148,6 +148,127 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="冯玮">
+      <meta itemprop="description" content="以梦为马，明日天涯">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冯玮的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/06/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E9%80%82%E9%85%8D%E5%99%A8%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">设计模式-适配器模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-11-06 08:44:32 / 修改时间：08:45:04" itemprop="dateCreated datePublished" datetime="2020-11-06T08:44:32+08:00">2020-11-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="适配器模式"><a href="#适配器模式" class="headerlink" title="适配器模式"></a>适配器模式</h1><h2 id="案例场景"><a href="#案例场景" class="headerlink" title="案例场景"></a>案例场景</h2><p> 随着公司业务的不断发展,当基础的系统逐步成型以后,业务运营就需要开始做用户的拉新和促活.从而保障<code>DUA</code>的增速以及最终<code>ROI</code>转换</p>
+<p>而这时候就会需要做一些营销系统,大部分常见的都是裂变.拉客,例如:你邀请一个用户开户,或者邀请一个用户下单,那么平台就会给你返利,多邀多得,同事随着拉新的 量越来越多开始设置每月下单都会给首单奖励等等买各种营销场景</p>
+<p>那么这个时候会做一个系统就会接收各种各样的MQ消息或者接口,如果一个个的去开发,就会耗费很大的成本,同事对于后期的拓展也有一定的难度,此时就会希望有一个系统可以配置一下就把外部的MQ接入进行,这些MQ就像上面提到的可能是 一些注册开户信息,商品下单消息等等</p>
+<p>而适配器的思想方式也恰恰可以御用到这里,并且我想强调 一下,适配器不只是可以适配接口往往还可以适配一些属性信息.</p>
+<p>1.场景模拟工程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">itstack-demo-design-6-00</span><br><span class="line">└── src</span><br><span class="line">    └── main</span><br><span class="line">        └── java</span><br><span class="line">            └── org.itstack.demo.design</span><br><span class="line">                ├── mq</span><br><span class="line">                │   ├── create_account.java</span><br><span class="line">                │   ├── OrderMq.java</span><br><span class="line">                │   └── POPOrderDelivered.java</span><br><span class="line">                └── service</span><br><span class="line">                    ├── OrderServicejava</span><br><span class="line">                    └── POPOrderService.java</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这里模拟了三个不同类型的MQ消息,而在消息体中都有一些必要的字段,比如用户ID,时间,业务id.但每个MQ消息的字段属性并不一样.就像用户id在不同的MQ里也有不同的字段:uid,userid等</li>
+<li>同时还提供了两个不同类型的接口,一个用于查询内部订单下单数量,一个 用于第三方是否首单</li>
+<li>后面会把这些不同类型的MQ和接口做适配兼容</li>
+</ul>
+<p>2.场景简述</p>
+<p>注册开户MQ</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">create_account</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String number;      <span class="comment">// 开户编号</span></span><br><span class="line">    <span class="keyword">private</span> String address;     <span class="comment">// 开户地</span></span><br><span class="line">    <span class="keyword">private</span> Date accountDate;   <span class="comment">// 开户时间</span></span><br><span class="line">    <span class="keyword">private</span> String desc;        <span class="comment">// 开户描述</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... get/set     </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>内部订单MQ</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderMq</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String uid;           <span class="comment">// 用户ID</span></span><br><span class="line">    <span class="keyword">private</span> String sku;           <span class="comment">// 商品</span></span><br><span class="line">    <span class="keyword">private</span> String orderId;       <span class="comment">// 订单ID</span></span><br><span class="line">    <span class="keyword">private</span> Date createOrderTime; <span class="comment">// 下单时间     </span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... get/set      </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>第三方订单MQ</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">POPOrderDelivered</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String uId;     <span class="comment">// 用户ID</span></span><br><span class="line">    <span class="keyword">private</span> String orderId; <span class="comment">// 订单号</span></span><br><span class="line">    <span class="keyword">private</span> Date orderTime; <span class="comment">// 下单时间</span></span><br><span class="line">    <span class="keyword">private</span> Date sku;       <span class="comment">// 商品</span></span><br><span class="line">    <span class="keyword">private</span> Date skuName;   <span class="comment">// 商品名称</span></span><br><span class="line">    <span class="keyword">private</span> BigDecimal decimal; <span class="comment">// 金额</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... get/set      </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>查询用户内部下单数量接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(POPOrderService.class);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">queryUserOrderCount</span><span class="params">(String userId)</span></span>&#123;</span><br><span class="line">        logger.info(<span class="string">&quot;自营商家，查询用户的订单是否为首单：&#123;&#125;&quot;</span>, userId);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">10L</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>查询用户第三方下单首单接口</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">POPOrderService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(POPOrderService.class);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isFirstOrder</span><span class="params">(String uId)</span> </span>&#123;</span><br><span class="line">        logger.info(<span class="string">&quot;POP商家，查询用户的订单是否为首单：&#123;&#125;&quot;</span>, uId);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>以上这几项就是不同MQ以及不同的 接口的一个体现,后面我们将使用这样的MQ消息和接口给他们做相应的适配</li>
+</ul>
+<h2 id="适配器模式构造代码"><a href="#适配器模式构造代码" class="headerlink" title="适配器模式构造代码"></a>适配器模式构造代码</h2><p> 统一的MQ消息体适配器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RebateInfo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String userId;  <span class="comment">// 用户ID</span></span><br><span class="line">    <span class="keyword">private</span> String bizId;   <span class="comment">// 业务ID</span></span><br><span class="line">    <span class="keyword">private</span> Date bizTime;   <span class="comment">// 业务时间</span></span><br><span class="line">    <span class="keyword">private</span> String desc;    <span class="comment">// 业务描述</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ... get/set</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>MQ消息中会有多种多样的类型属性,虽然他们都有同样的值提供给适用方,但是如果都这样接入那么当MQ消息特别多的时候就会很麻烦</li>
+<li>所以在这个 案例中,我们定义了通用的MQ消息体,后续把所有接入进来的消息进行统一的处理</li>
+</ul>
+<p>MQ消息体适配器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MQAdapter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RebateInfo <span class="title">filter</span><span class="params">(String strJson, Map&lt;String, String&gt; link)</span> <span class="keyword">throws</span> NoSuchMethodException, InvocationTargetException, IllegalAccessException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> filter(JSON.parseObject(strJson, Map.class), link);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RebateInfo <span class="title">filter</span><span class="params">(Map obj, Map&lt;String, String&gt; link)</span> <span class="keyword">throws</span> NoSuchMethodException, InvocationTargetException, IllegalAccessException </span>&#123;</span><br><span class="line">        RebateInfo rebateInfo = <span class="keyword">new</span> RebateInfo();</span><br><span class="line">        <span class="keyword">for</span> (String key : link.keySet()) &#123;</span><br><span class="line">            Object val = obj.get(link.get(key));</span><br><span class="line">            RebateInfo.class.getMethod(<span class="string">&quot;set&quot;</span> + key.substring(<span class="number">0</span>, <span class="number">1</span>).toUpperCase() + key.substring(<span class="number">1</span>), String.class).invoke(rebateInfo, val.toString());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> rebateInfo;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>这个类中的方法非常的重要,主要 用于把不同类型的MQ的各种属性映射成我们需要的属性并返回,.就像用户id.uid ,映射成我们需要的userid 做统一处理</p>
+</li>
+<li><p>而在这个处理过程中需要把映射管理传递给<code>Map&lt;String,String&gt; link</code>,就是准确的描述了,当前MQ中某个属性的名称,映射为我们的某个属性名称</p>
+</li>
+<li><p>最终因为我们接受到的mq消息基本都是json格式,可以转换为map格式,最后使用反射调用的方式给我们的类型赋值</p>
+<p>测试适配类</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_MQAdapter</span><span class="params">()</span> <span class="keyword">throws</span> NoSuchMethodException, IllegalAccessException, InvocationTargetException </span>&#123;</span><br><span class="line">    create_account create_account = <span class="keyword">new</span> create_account();</span><br><span class="line">    create_account.setNumber(<span class="string">&quot;100001&quot;</span>);</span><br><span class="line">    create_account.setAddress(<span class="string">&quot;河北省.廊坊市.广阳区.大学里职业技术学院&quot;</span>);</span><br><span class="line">    create_account.setAccountDate(<span class="keyword">new</span> Date());</span><br><span class="line">    create_account.setDesc(<span class="string">&quot;在校开户&quot;</span>);          </span><br><span class="line"></span><br><span class="line">    HashMap&lt;String, String&gt; link01 = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">    link01.put(<span class="string">&quot;userId&quot;</span>, <span class="string">&quot;number&quot;</span>);</span><br><span class="line">    link01.put(<span class="string">&quot;bizId&quot;</span>, <span class="string">&quot;number&quot;</span>);</span><br><span class="line">    link01.put(<span class="string">&quot;bizTime&quot;</span>, <span class="string">&quot;accountDate&quot;</span>);</span><br><span class="line">    link01.put(<span class="string">&quot;desc&quot;</span>, <span class="string">&quot;desc&quot;</span>);</span><br><span class="line">    RebateInfo rebateInfo01 = MQAdapter.filter(create_account.toString(), link01);</span><br><span class="line">    System.out.println(<span class="string">&quot;mq.create_account(适配前)&quot;</span> + create_account.toString());</span><br><span class="line">    System.out.println(<span class="string">&quot;mq.create_account(适配后)&quot;</span> + JSON.toJSONString(rebateInfo01));</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line"></span><br><span class="line">    OrderMq orderMq = <span class="keyword">new</span> OrderMq();</span><br><span class="line">    orderMq.setUid(<span class="string">&quot;100001&quot;</span>);</span><br><span class="line">    orderMq.setSku(<span class="string">&quot;10928092093111123&quot;</span>);</span><br><span class="line">    orderMq.setOrderId(<span class="string">&quot;100000890193847111&quot;</span>);</span><br><span class="line">    orderMq.setCreateOrderTime(<span class="keyword">new</span> Date()); </span><br><span class="line"></span><br><span class="line">    HashMap&lt;String, String&gt; link02 = <span class="keyword">new</span> HashMap&lt;String, String&gt;();</span><br><span class="line">    link02.put(<span class="string">&quot;userId&quot;</span>, <span class="string">&quot;uid&quot;</span>);</span><br><span class="line">    link02.put(<span class="string">&quot;bizId&quot;</span>, <span class="string">&quot;orderId&quot;</span>);</span><br><span class="line">    link02.put(<span class="string">&quot;bizTime&quot;</span>, <span class="string">&quot;createOrderTime&quot;</span>);</span><br><span class="line">    RebateInfo rebateInfo02 = MQAdapter.filter(orderMq.toString(), link02);</span><br><span class="line"></span><br><span class="line">    System.out.println(<span class="string">&quot;mq.orderMq(适配前)&quot;</span> + orderMq.toString());</span><br><span class="line">    System.out.println(<span class="string">&quot;mq.orderMq(适配后)&quot;</span> + JSON.toJSONString(rebateInfo02));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在这里我们分别模拟传入了两个不同的MQ消息，并设置字段的映射关系。</li>
+<li>等真的业务场景开发中，就可以配这种映射配置关系交给配置文件或者数据库后台配置，减少编码。</li>
+</ul>
+<p>测试结果</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mq.create_account(适配前)&#123;<span class="string">&quot;accountDate&quot;</span>:<span class="number">1591024816000</span>,<span class="string">&quot;address&quot;</span>:<span class="string">&quot;河北省.廊坊市.广阳区.大学里职业技术学院&quot;</span>,<span class="string">&quot;desc&quot;</span>:<span class="string">&quot;在校开户&quot;</span>,<span class="string">&quot;number&quot;</span>:<span class="string">&quot;100001&quot;</span>&#125;</span><br><span class="line">mq.create_account(适配后)&#123;<span class="string">&quot;bizId&quot;</span>:<span class="string">&quot;100001&quot;</span>,<span class="string">&quot;bizTime&quot;</span>:<span class="number">1591077840669</span>,<span class="string">&quot;desc&quot;</span>:<span class="string">&quot;在校开户&quot;</span>,<span class="string">&quot;userId&quot;</span>:<span class="string">&quot;100001&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">mq.orderMq(适配前)&#123;<span class="string">&quot;createOrderTime&quot;</span>:<span class="number">1591024816000</span>,<span class="string">&quot;orderId&quot;</span>:<span class="string">&quot;100000890193847111&quot;</span>,<span class="string">&quot;sku&quot;</span>:<span class="string">&quot;10928092093111123&quot;</span>,<span class="string">&quot;uid&quot;</span>:<span class="string">&quot;100001&quot;</span>&#125;</span><br><span class="line">mq.orderMq(适配后)&#123;<span class="string">&quot;bizId&quot;</span>:<span class="string">&quot;100000890193847111&quot;</span>,<span class="string">&quot;bizTime&quot;</span>:<span class="number">1591077840669</span>,<span class="string">&quot;userId&quot;</span>:<span class="string">&quot;100001&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">Process finished with exit code <span class="number">0</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从上面可以看到，同样的字段值在做了适配前后分别有统一的字段属性，进行处理。这样业务开发中也就非常简单了。</li>
+<li>另外有一个非常重要的地方，在实际业务开发中，除了反射的使用外，还可以加入<strong>代理类</strong>把映射的配置交给它。这样就可以不需要每一个mq都手动创建类了。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/04/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1303,7 +1424,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
