@@ -148,6 +148,124 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="冯玮">
+      <meta itemprop="description" content="以梦为马，明日天涯">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冯玮的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">设计模式-装饰器模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-11-12 15:31:47 / 修改时间：15:32:45" itemprop="dateCreated datePublished" datetime="2020-11-12T15:31:47+08:00">2020-11-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="装饰器模式"><a href="#装饰器模式" class="headerlink" title="装饰器模式"></a>装饰器模式</h1><h2 id="一、装饰器模式介紹"><a href="#一、装饰器模式介紹" class="headerlink" title="一、装饰器模式介紹"></a>一、装饰器模式介紹</h2><p>装饰器模式的核心是在不改原有类的基础上给类新增功能，不改变原有类，可能有的小伙伴就会想到继承、AOP切面，当然这些方式都可以实现，但是使用装饰器模式会是另一种思路更为灵活，可以避免继承导致子类过多。也可以避免AOP带来的复杂性；</p>
+<p>很多熟悉的场景用到装饰器模式：</p>
+<p><code>new BuffereReader(new FileReader(&quot;&quot;));</code>这段代码你是否熟悉。相信学习java到字节流，字符流。文件流的内容时都见到了这样的代码，一层嵌套一层，一层嵌套一层，字节流转字符流等等，而这样的方式使用就是装饰器的一种体现</p>
+<h2 id="二、案例场景模拟"><a href="#二、案例场景模拟" class="headerlink" title="二、案例场景模拟"></a>二、案例场景模拟</h2><p><img src="https://bugstack.cn/assets/images/2020/itstack-demo-design-9-02.png" alt="场景模拟；单点登录功能扩展"></p>
+<p><strong>在本案例中我们模拟一个单点登录功能扩充的场景</strong></p>
+<p>谁也业务的逐渐发展，从刚开始的内部ERP系统仅仅需要判断用户验证即可，验证成功以后，访问所有的资源，业务的扩展之后，团队里面出现专门的运营人员，营销人员，数据藤原，每个人的对与ERP的使用需求不同，并且为了保证数据的安全性，不会让每个用户都有最高的权限</p>
+<p>那么以往使用<code>sso</code>是一个组件化通用的服务，不能在里面添加需要的用户访问验证功能，这个时候我们就可以使用装饰器模式，扩展原有的单点登录系统，但同时也要保证原有功能不够影响，可以继续使用</p>
+<h3 id="1-案例模拟工程"><a href="#1-案例模拟工程" class="headerlink" title="1.案例模拟工程"></a>1.案例模拟工程</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">itstack-demo-design-9-00</span><br><span class="line">└── src</span><br><span class="line">    └── main</span><br><span class="line">        └── java</span><br><span class="line">            └── org.itstack.demo.design</span><br><span class="line">                ├── HandlerInterceptor.java</span><br><span class="line">                └── SsoInterceptor.java</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这里模拟的是spring中的类：<code>HandlerInterceptor</code>，实现接口功能<code>SsoInterceptor</code>模拟的单点登录拦截服务。</li>
+<li>为了避免引入太多spring的内容影响对设计模式的阅读，这里使用了同名的类和方法，尽可能减少外部的依赖</li>
+</ul>
+<p>模拟<code>spring</code>的<code>HanlderInterceptor</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">HandleInterceptor</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(String request,String response,Object handler)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际的单点登录开发会基于<code>org.springframework.web.servlet.HandlerInterceptor</code>  来实现</p>
+<p>模拟单点登录操作功能</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SsoInterceptor</span> <span class="keyword">implements</span>  <span class="title">HandleInterceptor</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">preHandel</span><span class="params">(String request,String response,Object handler)</span></span>&#123;</span><br><span class="line">        <span class="comment">//模拟获取cookie</span></span><br><span class="line">        String ticket = request.substring(<span class="number">1</span>,<span class="number">8</span>);</span><br><span class="line">        <span class="comment">//模拟校验</span></span><br><span class="line">        <span class="keyword">return</span> ticket.equals(<span class="string">&quot;success&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这里的模拟实现非常的简单只是截取字符串。实际使用需要从<code>HttpServletRequest request</code>对象中获取<code>cookie</code>信息，解析<code>ticket</code>值做校验。</li>
+<li>在返回的里面而非常的简单，只要获取到了success就认为允许登录</li>
+</ul>
+<h2 id="三、装饰器模式重构代码"><a href="#三、装饰器模式重构代码" class="headerlink" title="三、装饰器模式重构代码"></a>三、装饰器模式重构代码</h2><p>装饰器模式主要解决的是直接继承下因功能的不断横向扩展导致子类膨胀的问题,而是用装饰器模式后就会比直接继承显得更加灵活,同事这样也就不再需要子类的维护</p>
+<p>在装饰器模式中有四个比较重要的角色:</p>
+<ol>
+<li>抽象构建角色 – 定义抽象接口</li>
+<li>具体构建角色 – 实现抽象接口,可以是一组</li>
+<li>装饰角色 – 定义抽象类并继承接口中的方法,保证一致性</li>
+<li>具体装饰角色 – 扩展装饰具体的实现逻辑</li>
+</ol>
+<p>通过以上这四项来实现装饰器模式,主要核心内容会体现在抽象类的定义和实现上.</p>
+<p>工程结构</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">├─src</span><br><span class="line">│  ├─main</span><br><span class="line">│  │  └─java</span><br><span class="line">│  │      └─org</span><br><span class="line">│  │          └─itstack</span><br><span class="line">│  │              └─demo</span><br><span class="line">│  │                  └─design</span><br><span class="line">│  │                          HandlerInterceptor.java</span><br><span class="line">│  │                          SsoInterceptor.java</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://bugstack.cn/assets/images/2020/itstack-demo-design-9-03.png" alt="装饰器模式模型结构"></p>
+<ul>
+<li>以上是一个装饰器实现的类图结构,重点的类是<code>SsoDecorator</code> ,这个类是一个抽象类,主要完成了对接口<code>handlerIntercrptor</code>  继承</li>
+<li>当装饰角色继承接口后会提供构造函数,入参就是继承的接口实现类即可,这样就可以很方便的扩展出不同功能的组件</li>
+</ul>
+<p><strong>代码实现</strong></p>
+<p>抽象类装饰角色</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">SsoDecorator</span> <span class="keyword">implements</span> <span class="title">HandlerInterceptor</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> HandleInterceptor handleInterceptor;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">SsoDecorator</span> <span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">SsoDecorator</span><span class="params">(HandleInterceptor handleInterceptor)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.handleInterceptor = handleInterceptor;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(String request,String response,Object handler)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> handleInterceptor.preHandle(requrst,response,handler);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在 装饰类中有两个重点的地方是: 1&gt;继承了处理接口 2&gt;提供了构造函数 3&gt;覆盖了方法 <code>preHandle</code></li>
+<li>以上三个点是装饰器模式的核心处理部分,这样可以踢掉对子类继承的方式时间逻辑功能扩展</li>
+</ul>
+<p>装饰角色逻辑实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginSsoDecorator</span> <span class="keyword">extends</span> <span class="title">SsoDecorator</span></span>&#123;</span><br><span class="line">     <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(LoginSsoDecorator.class);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Map&lt;String, String&gt; authMap = <span class="keyword">new</span> ConcurrentHashMap&lt;String, String&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        authMap.put(<span class="string">&quot;huahua&quot;</span>, <span class="string">&quot;queryUserInfo&quot;</span>);</span><br><span class="line">        authMap.put(<span class="string">&quot;doudou&quot;</span>, <span class="string">&quot;queryUserInfo&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LoginSsoDecorator</span><span class="params">(HandlerInterceptor handlerInterceptor)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(handlerInterceptor);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(String request, String response, Object handler)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">boolean</span> success = <span class="keyword">super</span>.preHandle(request, response, handler);</span><br><span class="line">        <span class="keyword">if</span> (!success) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        String userId = request.substring(<span class="number">8</span>);</span><br><span class="line">        String method = authMap.get(userId);</span><br><span class="line">        logger.info(<span class="string">&quot;模拟单点登录方法访问拦截校验：&#123;&#125; &#123;&#125;&quot;</span>, userId, method);</span><br><span class="line">        <span class="comment">// 模拟方法校验</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;queryUserInfo&quot;</span>.equals(method);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在具体的装饰类实现中,继承了装饰类<code>SsoDecorator</code> 那么现在就可以扩展方法,<code>preHandle</code></li>
+<li>在<code>preHandel</code>的实现中可以看到,这里只关心扩展的部分功能,同时不会影响原有类的核心服务,也不会因为使用继承方式而导致的多余子类,增加了整体的灵活性</li>
+</ul>
+<h2 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h2><ul>
+<li>使用装饰器模式满足单元职责原则,你可以在自己的装饰类中完成功能逻辑的扩展,而不影响主类,同时可以按需在运行时添加和删除这部分逻辑,另外装饰器模式与继承弗雷重写方法,在某些时候需要按需选择,并不一定某一个就是最好</li>
+<li>装饰器实现的重点是对抽象类继承接口方式的使用,同时设定被集成的接口可以通过构造函数传递其实现类,由此增加扩展性并重写方法里可以实现此部分父类实现的功能</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/11/%E9%98%BF%E9%87%8Cdruid%E6%95%B0%E6%8D%AE%E6%BA%90%E9%85%8D%E7%BD%AE%E5%8F%8A%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1383,78 +1501,11 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/20/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="冯玮">
-      <meta itemprop="description" content="以梦为马，明日天涯">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="冯玮的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/20/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-10-20 13:58:48" itemprop="dateCreated datePublished" datetime="2020-10-20T13:58:48+08:00">2020-10-20</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 
@@ -1518,7 +1569,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
