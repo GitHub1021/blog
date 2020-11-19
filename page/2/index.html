@@ -148,6 +148,220 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/20/centos%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="冯玮">
+      <meta itemprop="description" content="以梦为马，明日天涯">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冯玮的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/20/centos%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">centos虚拟机安装</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-20 15:06:52 / 修改时间：15:09:30" itemprop="dateCreated datePublished" datetime="2020-10-20T15:06:52+08:00">2020-10-20</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="一、CentOS7-4下载"><a href="#一、CentOS7-4下载" class="headerlink" title="一、CentOS7.4下载"></a>一、CentOS7.4下载</h3><p>​     官网下载地址：<a target="_blank" rel="noopener" href="http://vault.centos.org/">http://vault.centos.org/</a></p>
+<p>  1、进入CentOS下载官网，找到CentOS7.4版本</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112161239784.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p> 2、在CentOS7.4版本页面中，找到isos/</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112161503341.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>  3、进入页面后，可以看到x86_64</p>
+<p><img src="https://img-blog.csdnimg.cn/2018111216180736.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p> 4、在CentOS下载页面中，选择 CentOS-7-x86_64-DVD-1708.torrent进行下载</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112162307215.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>5、下载完成之后，由于“CentOS-7-x86_64-DVD-1708.torrent”只是一个BT种子文件，而且非常小，这就需要我们使用迅雷等工具来对源镜像进行下载了</p>
+<p>  （1）打开迅雷，新建任务，把“CentOS-7-x86_64-DVD-1708.torrent”BT种子文件拖入到新建任务中，并点击立即下载</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112162942853.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>  （2）下载完成之后会生成如下的几个文件，CentOS-7-x86_64-DVD-1708.iso就是我们在工作中使用的镜像了</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112163208507.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<h3 id="二、CentOS7-4安装"><a href="#二、CentOS7-4安装" class="headerlink" title="二、CentOS7.4安装"></a>二、CentOS7.4安装</h3><p>  1、打开你的VMware Workstation Pro，并点击“创建新的虚拟机”，没有安装VMware Workstation Pro请点击<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39135287/article/details/82924547">VMware Workstation 14下载与安装</a></p>
+<p><img src="https://img-blog.csdnimg.cn/20181112163425986.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>2、点选典型(推荐)(T)，并点击“下一步”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112163607593.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>3、点选稍后安装操作系统(S)，并点击“下一步”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112163858190.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>4、点选Linux(L)，因为我们之前下载的 CentOS-7-x86_64-DVD-1708.iso 是64位 7.4版本的，所以这里我们选择CentOS 7 64位，并点击“下一步”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112164504835.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>5、虚拟机名称可以更改也可以不更改看自己需求，修改虚拟机的安装路径，并点击“下一步”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112165100926.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>6、磁盘选择默认为20.0GB，点选将虚拟磁盘存储为单个文件(O)，并点击“下一步”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112170051641.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>7、点击“完成”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112170232395.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>8、点击“编辑虚拟机设置”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112170724106.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>9、点选“使用ISO映像文件(M)”，并添加我们之前下载好的CentOS-7-x86_64-DVD-1708.iso</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112171601333.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>10、默认为NAT 模式(N)：用于共享主机的IP地址即可</p>
+<p><img src="https://img-blog.csdnimg.cn/20200229110353396.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>提示：11-13步骤 移除USB控制器、声卡和打印机 只是为了腾出更多的资源空间 (可以选择跳过 不移除)</p>
+<p>11、选择USB 控制器，并点击“移除(R)”</p>
+<p><img src="https://img-blog.csdnimg.cn/20200229110601994.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>12、选择声卡，并点击“移除(R)”</p>
+<p><img src="https://img-blog.csdnimg.cn/20200229110744352.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>13、选择打印机，并点击“移除(R)”，最后点击“确定”</p>
+<p><img src="https://img-blog.csdnimg.cn/20200229110954940.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>14、点击“开启此虚拟机”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112173512558.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>15、正在开启虚拟机，鼠标移入到虚拟机中，并按下“↑”键，选择Install CentOS 7，最后按下“Enter 键”</p>
+<p>​    提示： 鼠标移动到虚拟机内部单击或者按下Ctrl + G，鼠标即可移入到虚拟机中</p>
+<p>​           按下Ctrl + Alt，鼠标即可移出虚拟机</p>
+<p>​    注意： 在虚拟机中的操作，鼠标必须要移入到虚拟机中，否则虚拟机感应不到，无法对其进行操作</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112174017753.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>16、按下“Enter 键”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112174532637.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/20181112174720796.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>17、默认安装过程中的安装界面使用English (英语)，点击“Continue”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112175459759.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>18、配置时区 (DATE &amp; TIME)</p>
+<p>​    （1）选择DATE &amp; TIME</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112181108477.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>​    </p>
+<p>​    （2）时区设置为 Region：Asia  City：Shanghai</p>
+<p>​        日期和时间 设置与自己的电脑时间同步，最后点击“Done”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112180745997.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>19、设置软件选择 (SOFTWARE SELECTION)</p>
+<p>​     （1）选择SOFTWARE SELECTION</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112182226669.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>​    </p>
+<p>​    （2）点击勾选 Compatibility Libraries 和 Development Tools</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112182812677.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>如果希望安装带有界面的CentOS，请在左边Base Environment中，选择Server with GUI(带图形用户界面的服务器)，默认为Minimal Install (最小安装)，提示：如果安装有界面版本的，在如下的第22步骤中的操作会有所不同 (安装有界面版本的其实用处不大，都是可以通过命令行来设置的)，这里我没有安装有界面版本的</p>
+<p><img src="https://img-blog.csdnimg.cn/20200229113355475.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>20、设置安装位置 (INSTALLATION DESTINATION)</p>
+<p>   （1）选择INSTALLATION DESTINATION</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112184330599.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>  （2）点选 I will configuire parttioning，然后再点击“Done”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112184709136.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p> （3）更改模式，标准分区Standard Partition，点击“+”按钮添加分区</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112185430852.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>（4）添加 /boot分区，大小300MB，Add mount point</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112185658156.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/2018111218572297.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>（5）添加 swap分区，一般情况是物理内存的2倍大小，用于物理内存不足时使用，但可能造成系统不稳定，所以看情况，可以设置小一点，甚至设置为0MB，这里我设置为512MB，Add mount point</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112190216274.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/201811121902269.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>（6）增加根分区，不填写大小，即默认剩余的空间都给根分区，Add mount point</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112190725296.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/20181112190734886.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>（7）点击“Done”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112190941821.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>（8）点击“Accept Changes”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112191203212.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>21、点击“Begin Installation”，开始安装</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112191554323.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>22、设置系统用户root的密码 (ROOT PASSWORD)</p>
+<p>  （1）选择ROOT PASSWORD</p>
+<p><img src="https://img-blog.csdnimg.cn/2018111219203432.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>（2）为root设置密码 (密码长度最好不要小于6位数)，然后点击“Done”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112192438774.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>23、等待安装完成，然后点击“Reboot”</p>
+<p><img src="https://img-blog.csdnimg.cn/20181112193200108.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<h3 id="三、CentOS7-4基本设置"><a href="#三、CentOS7-4基本设置" class="headerlink" title="三、CentOS7.4基本设置"></a>三、CentOS7.4基本设置</h3><p><strong>1、登录CentOS，默认账号为root，密码为 你在前面安装时设置的root密码</strong></p>
+<p><strong>提示：在输入密码时，linux为了安全起见，是看不到你输入的密码。同时，如果是使用的是键盘右边的数字键盘输入密码的话，建议查看一下，数字键盘是否开启 (建议使用字母按键上面一排的 数字键输入密码)</strong></p>
+<p><img src="https://img-blog.csdnimg.cn/20200229122603642.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><strong>2、配置IP地址，网关</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/sysconfig/network-scripts/    //进入到network-scripts目录下  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">vi ifcfg-ens32  //编辑配置文件 </span><br><span class="line"></span><br><span class="line">//修改以下内容</span><br><span class="line"></span><br><span class="line">BOOTPROTO=static  //启用静态IP地址</span><br><span class="line">ONBOOT=yes      //开启自动启用网络连接</span><br><span class="line"></span><br><span class="line">//添加以下内容</span><br><span class="line">IPADDR=192.168.30.1      //设置IP地址</span><br><span class="line">NETMASK=255.255.255.0   //子网掩码</span><br><span class="line">GATEWAY=192.168.131.2   //设置网关</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20200229123200521.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/20200229123856473.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>2.1、如何设置Linux的IP地址</p>
+<p>1、在本地电脑打开“命令行窗口”，输入命令ipconfig，查看 以太网适配器 VMware Network Adapter VMnet8下的IPv4 地址</p>
+<p>2、可以看到 以太网适配器 VMware Network Adapter VMnet8下的IPv4 地址为 192.168.30.2</p>
+<p>3、当我们设置Linux的IP地址时，需要保证Linux的IP地址 与 VMnet8下的IPv4地址 的前面三位数必须相同，即 192.168.30 必须相同，这样Linux就能跟我们本地电脑互相通信，最后一位数不相同即可，例如Linux的IP地址可以设置为192.168.30.1 或者 192.168.30.124等</p>
+<p><img src="https://img-blog.csdnimg.cn/20190824182436514.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>2.2、如何设置Linux的网关：</p>
+<p>1、点击编辑(E) → 虚拟网络编辑器(N)</p>
+<p><img src="https://img-blog.csdnimg.cn/20181114180316562.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p> 2.3、如何设置Linux的网关，选择VMnet8，再点击”NAT设置”按钮，查看VMnet8 (NAT 模式)下的子网掩码</p>
+<p><img src="https://img-blog.csdnimg.cn/20181114180631782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/20190824183728116.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>3、查看VMnet8 (NAT 模式)下的网关，选择VMnet8，再点击”NAT设置”按钮</p>
+<p><img src="https://img-blog.csdnimg.cn/20181114181049708.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>3、重启网络服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service network restart</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20181112224709932.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>4、设置DNS地址   </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/resolv.conf    //编辑 resolv.conf文件</span><br><span class="line"></span><br><span class="line">nameserver 114.114.114.114   //添加DNS地址</span><br><span class="line"></span><br><span class="line">可以添加多个DNS地址，格式为：</span><br><span class="line">nameserver xxx1.xxx1.xxx1.xxx1</span><br><span class="line">nameserver xxx2.xxx2.xxx2.xxx2</span><br><span class="line">常用的DNS地址:</span><br><span class="line"> 阿里  223.5.5.5  或者  223.6.6.6</span><br><span class="line"> 谷歌  8.8.8.8</span><br><span class="line"> 国内移动、电信和联通通用的DNS  114.114.114.114</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20181112230257536.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>提示：如果是内网，配置上面的DNS地址有可能是访问不了外网的，在电脑右下角的网络图标中鼠标右键，选择打开”网络和Internet”设置，选择WLAN，然后在点击你连接的网络，查看网络信息</p>
+<p><img src="https://img-blog.csdnimg.cn/20200229130402386.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>填写内网的IPv4 DNS 服务器地址即可</p>
+<p><img src="https://img-blog.csdnimg.cn/20200229130655666.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>5、查看是否能够访问外网</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ping -c3 www.baidu.com</span><br><span class="line"></span><br><span class="line">PING www.a.shifen.com (14.215.177.38) 56(84) bytes of data.</span><br><span class="line"></span><br><span class="line">64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=1 ttl=128 time=9.45 ms</span><br><span class="line">64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=2 ttl=128 time=12.2 ms</span><br><span class="line">64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=3 ttl=128 time=9.29 ms</span><br><span class="line"></span><br><span class="line">--- www.a.shifen.com ping statistics ---</span><br><span class="line"></span><br><span class="line">3 packets transmitted, 3 received, 0% packet loss, time 2004ms</span><br><span class="line"></span><br><span class="line">rtt min/avg/max/mdev = 9.296/10.346/12.293/1.388 ms</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20200229125417688.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>6、永久关闭 firewalld防火墙（centos7默认的防火墙是firewalld防火墙，不是使用iptables，因此需要关闭firewalld服务）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service  // 停止firewalld服务</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld.service // 开机禁用firewalld服务</span><br><span class="line">iptables -L   //列出所有iptables规则</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20181113001448743.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>7、永久关闭SELinux防火墙</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysconfig/selinux       //编辑selinux文件</span><br><span class="line">SELINUX=disabled         //把文件中的SELINUX=enforcing 改成 SELINUX=disabled 即可</span><br><span class="line">sestatus    //查看SELinux状态</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20181114102457122.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>获取当前selinux防火墙的安全策略</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sestatus</span><br></pre></td></tr></table></figure>
+
+<p>可以看到当前selinux防火墙的安全策略仍为enforcing，配置文件并未生效</p>
+<p><img src="https://img-blog.csdnimg.cn/20181114104958342.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>这时需要我们重启，再去查看SELinux防火墙的状态，可以看到已经关闭了</p>
+<p><img src="https://img-blog.csdnimg.cn/2018111411401675.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>8、给/etc/rc.d/rc.local 文件设置 “x”可执行权限，最初设置默认是没有可执行权限的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">chmod +x /etc/rc.d/rc.local     //设置可执行权限</span><br><span class="line"></span><br><span class="line">//设置前</span><br><span class="line">-rwxr-xr--. 1 root root 473 Aug  5  2017 rc.local</span><br><span class="line">//设置后</span><br><span class="line">-rwxr-xr-x. 1 root root 473 Aug  5  2017 rc.local</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/20181113003426734.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>9、输入“halt”，关闭虚拟机，并拍摄快照，保存当前配置</p>
+<p><img src="https://img-blog.csdnimg.cn/20181113001706140.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/20181113001901947.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/20/hello-world/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -282,12 +496,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>

@@ -148,6 +148,258 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/19/java8-Stream%E5%AD%A6%E4%B9%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="冯玮">
+      <meta itemprop="description" content="以梦为马，明日天涯">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冯玮的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/11/19/java8-Stream%E5%AD%A6%E4%B9%A0/" class="post-title-link" itemprop="url">java8 Stream学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-11-19 15:27:24 / 修改时间：15:27:48" itemprop="dateCreated datePublished" datetime="2020-11-19T15:27:24+08:00">2020-11-19</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="JDK8-–-Stream"><a href="#JDK8-–-Stream" class="headerlink" title="JDK8 – Stream"></a>JDK8 – Stream</h1><p><img src="https://img-blog.csdnimg.cn/2020110911333574.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L211X3dpbmQ=,size_16,color_FFFFFF,t_70#pic_center" alt="在这里插入图片描述"></p>
+<h2 id="Stream能做什么"><a href="#Stream能做什么" class="headerlink" title="Stream能做什么?"></a>Stream能做什么?</h2><p>先贴上几个案例:</p>
+<ol>
+<li>从员工集合中筛选中salary大于8000的员工,并放置到新的集合里</li>
+<li>统计员工的最高薪资,平均薪资,薪资之和</li>
+<li>将员工按薪资从高到低排序,同样薪资者年龄小者在前</li>
+<li>将员工按性别分类,将员工按性别和地区分类,将员工按薪资是否高于8000分为两部分</li>
+</ol>
+<p>用传统的遍历也是不难,但是需要大量的代码,跟stream相比高下立判</p>
+<h2 id="1-stream概述"><a href="#1-stream概述" class="headerlink" title="1.stream概述"></a>1.stream概述</h2><p>java8 是一个非常成功的版本,这个版本新增的Stream,配合同版本出现的Lambda.给我们操作集合(Collection)提供了极大的遍历</p>
+<p>那么什么是<code>Stream</code>?</p>
+<blockquote>
+<p><code>Stream</code>将要处理元素的集合看做一种流,再流的过程中,借助<code>Stream Api</code>对流中的元素进行操作,比如:筛选,排序,聚合等.</p>
+</blockquote>
+<p><code>Stream</code>可以由数组或集合创建,对流的操作分为两种</p>
+<ol>
+<li>中间操作,每次返回一个新的流,,可以有多个</li>
+<li>终端操作,每个流只能进行一次终端操作,终端操作结束后流无法再次使用,终端操作会产生一个新的集合或值.</li>
+</ol>
+<p>另外,<code>stream</code>有几个特性:</p>
+<ol>
+<li><code>stream</code>不存储数据,而是按照特定的规则对数据进行计算,一般会输出结构</li>
+<li><code>stream</code>不会改变数据源,通常情况下不会产生一个新的集合或一个值</li>
+<li><code>stream</code>具有延迟执行特性,只有调用终端操作时,中间操作才会执行</li>
+</ol>
+<h2 id="2-stream-的创建"><a href="#2-stream-的创建" class="headerlink" title="2.stream 的创建"></a>2.stream 的创建</h2><p><code>stream</code>可以通过集合数据创建</p>
+<ol>
+<li><p>通过<code>java.unil.Collection.stream()</code>方法用集合创建流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; list = Arrays.asList(<span class="string">&quot;str1&quot;</span>, <span class="string">&quot;str2&quot;</span>, <span class="string">&quot;str3&quot;</span>);</span><br><span class="line"><span class="comment">//创建顺序流</span></span><br><span class="line">Stream&lt;String&gt; stream = list.stream();</span><br><span class="line"><span class="comment">//创建并行流</span></span><br><span class="line">Stream&lt;String&gt; stringStream = list.parallelStream();</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<ol start="2">
+<li><p>使用<code>java.unil.Arrays.stream(T[] array)</code>方法用数组创建流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] array = &#123;<span class="number">12</span>, <span class="number">23</span>, <span class="number">12</span>, <span class="number">44</span>&#125;;</span><br><span class="line">IntStream arrayStream = Arrays.stream(array);</span><br></pre></td></tr></table></figure>
+
+
+
+</li>
+</ol>
+<ol start="3">
+<li><p>使用<code>Stream</code>的静态方法:<code>of(),iterate(),generate()</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Stream&lt;Integer&gt; integerStream = Stream.of(<span class="number">1</span>, <span class="number">23</span>, <span class="number">4</span>);</span><br><span class="line">Stream&lt;Integer&gt; limit = Stream.iterate(<span class="number">1</span>, x -&gt; x + <span class="number">4</span>).limit(<span class="number">10</span>);</span><br><span class="line">Stream&lt;Double&gt; doubleStream = Stream.generate(Math::random).limit(<span class="number">10</span>);</span><br><span class="line">doubleStream.forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p><code>stream</code>和<code>parallelStream</code>的简单区分:<code>stream</code>是顺序流,由主线程按顺序对流进行执行操作,而<code>parallelStream</code> 是并行流,内部以多线程并行执行的方式对流进行操作,但前提是流中的数据处理没有顺序要求,例如筛选集合中的奇数,两者的处理不同之处:</p>
+<p><img src="https://img-blog.csdnimg.cn/20201106164400889.png" alt="在这里插入图片描述"></p>
+<p>如果流中的数据量足够大,并行流通过<code>parallel()</code>把顺序转换成并行流:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Optional&lt;Integer&gt; findFirst = list.stream().parallel().filter(x-&gt;x&gt;<span class="number">6</span>).findFirst();</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-stream-的使用"><a href="#3-stream-的使用" class="headerlink" title="3.stream 的使用"></a>3.stream 的使用</h2><p>在使用<code>stream</code>之前.先理解一个概念:<code>Optional</code></p>
+<blockquote>
+<p><code>Optional</code>类是一个可以<code>null</code>的容器对象,如果存在则<code>isPresent()</code>方法返回<code>true</code>,调用<code>get()</code>方法会返回该对象</p>
+</blockquote>
+<p>案例中使用的员工类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Persion</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="keyword">private</span> Integer salary;</span><br><span class="line">    <span class="keyword">private</span> String gender;</span><br><span class="line">    <span class="keyword">private</span> String area;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Persion</span><span class="params">(String name, Integer age, Integer salary, String gender, String area)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">        <span class="keyword">this</span>.salary = salary;</span><br><span class="line">        <span class="keyword">this</span>.gender = gender;</span><br><span class="line">        <span class="keyword">this</span>.area = area;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略get() set()</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>初始化员工</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Persion&gt; persions = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;张三&quot;</span>,<span class="number">26</span>,<span class="number">8000</span>,<span class="string">&quot;男&quot;</span>,<span class="string">&quot;广州&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;李四&quot;</span>,<span class="number">23</span>,<span class="number">7600</span>,<span class="string">&quot;女&quot;</span>,<span class="string">&quot;天津&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;王五&quot;</span>,<span class="number">43</span>,<span class="number">8409</span>,<span class="string">&quot;男&quot;</span>,<span class="string">&quot;北京&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;赵六&quot;</span>,<span class="number">26</span>,<span class="number">9872</span>,<span class="string">&quot;女&quot;</span>,<span class="string">&quot;上海&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;周八&quot;</span>,<span class="number">34</span>,<span class="number">6504</span>,<span class="string">&quot;男&quot;</span>,<span class="string">&quot;广州&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-遍历-匹配-foreach-find-match"><a href="#3-1-遍历-匹配-foreach-find-match" class="headerlink" title="3.1 遍历/匹配(foreach/find.match)"></a>3.1 遍历/匹配(foreach/find.match)</h3><p><code>stream</code>也是支持类似集合的遍历和匹配元素的,只是<code>Stream</code>中的元素是以<code>Optional</code>类型存在的</p>
+<p><code>Stream</code>的遍历和匹配是非常简单的</p>
+<p><img src="https://img-blog.csdnimg.cn/2020110914450139.png" alt="在这里插入图片描述"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; list = Arrays.asList(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>);</span><br><span class="line">Stream&lt;Integer&gt; integerStream = list.stream().filter(x -&gt; x &gt; <span class="number">10</span>);</span><br><span class="line"><span class="comment">//遍历出所有符合条件的元素</span></span><br><span class="line">integerStream.forEach(System.out::println);</span><br><span class="line"><span class="comment">//匹配第一个筛选出来的元素</span></span><br><span class="line">Optional&lt;Integer&gt; first = list.stream().filter(x -&gt; x &gt; <span class="number">6</span>).findFirst();</span><br><span class="line">System.out.println(first);</span><br><span class="line"><span class="comment">//筛选出任意一个符合条件的元素</span></span><br><span class="line">Optional&lt;Integer&gt; any = list.stream().parallel().filter(x -&gt; x &gt; <span class="number">6</span>).findAny();</span><br><span class="line">System.out.println(any);</span><br><span class="line"><span class="comment">//是否包含特定条件的元素</span></span><br><span class="line"><span class="keyword">boolean</span> match = list.stream().anyMatch(x -&gt; x &lt; <span class="number">6</span>);</span><br><span class="line">System.out.println(match);</span><br><span class="line"><span class="comment">//是否所有的元素都符合条件</span></span><br><span class="line"><span class="keyword">boolean</span> b = list.stream().allMatch(x -&gt; x &lt; <span class="number">10</span>);</span><br><span class="line">System.out.println(b);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-2-筛选-filter"><a href="#3-2-筛选-filter" class="headerlink" title="3.2 筛选(filter)"></a>3.2 筛选(filter)</h3><p>筛选,是按照一定的规则校验流中的元素,将符合条件的元素提取到新的流中的操作.</p>
+<p><img src="https://img-blog.csdnimg.cn/20201109144706541.jpg" alt="stream的筛选"></p>
+<p><strong>案例:筛选出<code>Integer</code>集合中大于7的元素,并打印出来</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; list = Arrays.asList(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>, <span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>);</span><br><span class="line">list.stream().filter(n -&gt; n &gt; <span class="number">7</span>).forEach(System.out::println);</span><br></pre></td></tr></table></figure>
+
+<p><strong>案例:筛选员工中工资高于8000的人,并形成新的集合</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Persion&gt; persions = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;张三&quot;</span>,<span class="number">26</span>,<span class="number">8000</span>,<span class="string">&quot;男&quot;</span>,<span class="string">&quot;广州&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;李四&quot;</span>,<span class="number">23</span>,<span class="number">7600</span>,<span class="string">&quot;女&quot;</span>,<span class="string">&quot;天津&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;王五&quot;</span>,<span class="number">43</span>,<span class="number">8409</span>,<span class="string">&quot;男&quot;</span>,<span class="string">&quot;北京&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;赵六&quot;</span>,<span class="number">26</span>,<span class="number">9872</span>,<span class="string">&quot;女&quot;</span>,<span class="string">&quot;上海&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;周八&quot;</span>,<span class="number">34</span>,<span class="number">6504</span>,<span class="string">&quot;男&quot;</span>,<span class="string">&quot;广州&quot;</span>));</span><br><span class="line">List&lt;Persion&gt; list1 = persions.stream().filter(persion -&gt; persion.getSalary() &gt; <span class="number">8000</span>).collect(Collectors.toList());</span><br><span class="line">System.out.println(list1);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-3聚合-max-min-count"><a href="#3-3聚合-max-min-count" class="headerlink" title="3.3聚合(max/min/count)"></a>3.3聚合(max/min/count)</h3><p><code>max</code>,<code>min</code>,<code>count</code>这些词在sql中经常使用,现在stream中也 引入了这些概念和用法,极大的程度方便了我们对集合.数组的统计工作</p>
+<p><img src="D:\工作学习\设计模式图片\steam聚合.png" alt="在这里插入图片描述"></p>
+<p><strong>案例:获取<code>String</code>集合中最长的元素</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; stringList = Arrays.asList(<span class="string">&quot;java&quot;</span>, <span class="string">&quot;net&quot;</span>, <span class="string">&quot;c#&quot;</span>, <span class="string">&quot;python&quot;</span>, <span class="string">&quot;php&quot;</span>);</span><br><span class="line"><span class="comment">//输入最长的字符串</span></span><br><span class="line">Optional&lt;String&gt; max1 = stringList.stream().max(Comparator.comparing(String::length));</span><br><span class="line">System.out.println(max1);<span class="comment">//输出结果  python</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//输出最短的字符串</span></span><br><span class="line">Optional&lt;String&gt; max = stringList.stream().max(<span class="keyword">new</span> Comparator&lt;String&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(String o1, String o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> o2.length() - o1.length(); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">System.out.println(max);<span class="comment">//输出 c#</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>案例:获取<code>Integer</code>集合中的最大值</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; integerList = Arrays.asList(<span class="number">100</span>, <span class="number">200</span>, <span class="number">120</span>, <span class="number">110</span>, <span class="number">99</span>, <span class="number">89</span>);</span><br><span class="line">Optional&lt;Integer&gt; max = integerList.stream().max(Integer::compareTo);</span><br><span class="line">System.out.println(max);</span><br><span class="line"><span class="comment">//自定义比较</span></span><br><span class="line">Optional&lt;Integer&gt; max1 = integerList.stream().max(<span class="keyword">new</span> Comparator&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Integer o1, Integer o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> o1.compareTo(o2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><strong>案例:获取员工工资最高的人</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Persion&gt; persions = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;张三&quot;</span>, <span class="number">26</span>, <span class="number">8000</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;李四&quot;</span>, <span class="number">23</span>, <span class="number">7600</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;天津&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;王五&quot;</span>, <span class="number">43</span>, <span class="number">8409</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;北京&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;赵六&quot;</span>, <span class="number">26</span>, <span class="number">9872</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;上海&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;周八&quot;</span>, <span class="number">34</span>, <span class="number">6504</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line">Optional&lt;Persion&gt; max2 =  persions.stream().max(Comparator.comparingInt(Persion::getSalary));</span><br><span class="line">System.out.println(max2);</span><br></pre></td></tr></table></figure>
+
+<p><strong>案例:计算<code>Integer</code>集合中大于6的元素个数</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; integerList = Arrays.asList(<span class="number">100</span>, <span class="number">200</span>, <span class="number">120</span>, <span class="number">110</span>, <span class="number">99</span>, <span class="number">89</span>);</span><br><span class="line"><span class="keyword">long</span> count = integerList.stream().filter(n -&gt; n &gt; <span class="number">6</span>).count();</span><br><span class="line">System.out.println(<span class="string">&quot;count=&quot;</span>+count);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-4映射-map-flatMap"><a href="#3-4映射-map-flatMap" class="headerlink" title="3.4映射(map/flatMap)"></a>3.4映射(map/flatMap)</h3><p>映射,可以将一个流的元素按照一定的映射规则映射到另一个流中,分别为<code>map</code>,<code>flatMap</code></p>
+<ul>
+<li><code>map</code>:接受一个函数作为参数,该函数会被应用到每个元素上,并将其英社称一个新的元素</li>
+<li><code>flatMap</code>:接收一个函数作为参数,将流中的每一个值都换成另一个流,然后把所有的流连接成一个流</li>
+</ul>
+<p><img src="D:\工作学习\设计模式图片\stream-map图解.jpg" alt="在这里插入图片描述"></p>
+<p><img src="D:\工作学习\设计模式图片\stream-flatmap图解.jpg" alt="在这里插入图片描述"></p>
+<p><strong>案例:英文字符串数组的元素全部改为大写,整个数组的每个元素+3</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; stringList = Arrays.asList(<span class="string">&quot;java&quot;</span>, <span class="string">&quot;net&quot;</span>, <span class="string">&quot;c++&quot;</span>, <span class="string">&quot;python&quot;</span>, <span class="string">&quot;php&quot;</span>);</span><br><span class="line"><span class="comment">//首字母大写</span></span><br><span class="line">List&lt;String&gt; collect = stringList.stream().map(str -&gt; str.substring(<span class="number">0</span>, <span class="number">1</span>).toUpperCase() + str.substring(<span class="number">1</span>)).collect(Collectors.toList());</span><br><span class="line">System.out.println(collect);</span><br><span class="line">List&lt;Integer&gt; integerList = Arrays.asList(<span class="number">100</span>, <span class="number">200</span>, <span class="number">120</span>, <span class="number">110</span>, <span class="number">99</span>, <span class="number">89</span>);</span><br><span class="line"><span class="comment">//每个元素+3</span></span><br><span class="line">List&lt;Integer&gt; collect1 = integerList.stream().map(n -&gt; n + <span class="number">3</span>).collect(Collectors.toList());</span><br><span class="line">System.out.println(collect1);</span><br></pre></td></tr></table></figure>
+
+<p><strong>将两个字符串组合合并成一个新的字符串数组</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; stringList = Arrays.asList(<span class="string">&quot;1,2,4,5&quot;</span>, <span class="string">&quot;ab,cd,ef&quot;</span>);</span><br><span class="line">List&lt;String&gt; collect = stringList.stream().flatMap(str -&gt; &#123;</span><br><span class="line">    String[] split = str.split(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">    Stream&lt;String&gt; split1 = Stream.of(split);</span><br><span class="line">    <span class="keyword">return</span> split1;</span><br><span class="line">&#125;).collect(Collectors.toList());</span><br><span class="line">System.out.println(stringList);</span><br><span class="line">System.out.println(collect);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-5归约-reduce"><a href="#3-5归约-reduce" class="headerlink" title="3.5归约(reduce)"></a>3.5归约(reduce)</h3><p>规约,也成缩减,顾名思义,是把一个流缩减成一个值,能实现对集合求和,求乘机和最值的操作</p>
+<p><strong>案例一：求<code>Integer</code>集合的元素之和、乘积和最大值</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; integerList = Arrays.asList(<span class="number">2</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">56</span>, <span class="number">2</span>, <span class="number">4</span>);</span><br><span class="line"><span class="comment">//求和</span></span><br><span class="line">Optional&lt;Integer&gt; sum = integerList.stream().reduce((x, y) -&gt; x + y);<span class="comment">//多个参数需要在箭头的左边加(括号)</span></span><br><span class="line">System.out.println(sum);</span><br><span class="line">Integer sum1 = integerList.stream().reduce(<span class="number">0</span>, Integer::sum);</span><br><span class="line">System.out.println(sum1);</span><br><span class="line">Optional&lt;Integer&gt; sum2 = integerList.stream().reduce(Integer::sum);</span><br><span class="line">System.out.println(sum2);</span><br><span class="line"><span class="comment">//求乘积</span></span><br><span class="line">Optional&lt;Integer&gt; d = integerList.stream().reduce((x, y) -&gt; x * y);</span><br><span class="line">System.out.println(d);</span><br><span class="line"><span class="comment">//求最大值</span></span><br><span class="line">Optional&lt;Integer&gt; max1 = integerList.stream().reduce((x, y) -&gt; x &gt; y ? x : y);</span><br><span class="line">System.out.println(max1);</span><br><span class="line">Optional&lt;Integer&gt; max2 = integerList.stream().reduce(Integer::max);</span><br><span class="line">System.out.println(max2);</span><br></pre></td></tr></table></figure>
+
+<p><strong>案例二：求所有员工的工资之和和最高工资</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Persion&gt; persions = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;张三&quot;</span>, <span class="number">26</span>, <span class="number">8000</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;李四&quot;</span>, <span class="number">23</span>, <span class="number">7600</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;天津&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;王五&quot;</span>, <span class="number">43</span>, <span class="number">8409</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;北京&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;赵六&quot;</span>, <span class="number">26</span>, <span class="number">9872</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;上海&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;周八&quot;</span>, <span class="number">34</span>, <span class="number">6504</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line"><span class="comment">//获取所有的工资</span></span><br><span class="line">List&lt;Integer&gt; salary = persions.stream().map(persion -&gt; persion.getSalary()).collect(Collectors.toList());</span><br><span class="line"><span class="comment">//工资之和</span></span><br><span class="line">Optional&lt;Integer&gt; sum1 = salary.stream().reduce((x, y) -&gt; x + y);</span><br><span class="line">System.out.println(sum1);</span><br><span class="line">Integer sum2 = persions.stream().reduce(<span class="number">0</span>, (sum, p) -&gt; sum = sum + p.getSalary(), (x, y) -&gt; x + y);</span><br><span class="line">System.out.println(sum2);</span><br><span class="line">Integer sum3 = persions.stream().reduce(<span class="number">0</span>, (sum, p) -&gt; sum + p.getSalary(), Integer::sum);</span><br><span class="line">System.out.println(sum3);</span><br><span class="line"><span class="comment">//求最高工资</span></span><br><span class="line">Integer max1 = persions.stream().reduce(<span class="number">0</span>, (max, p) -&gt; max &gt; p.getSalary() ? max : p.getSalary(), Integer::max);</span><br><span class="line">System.out.println(max1);</span><br><span class="line">Integer max2 = persions.stream().reduce(<span class="number">0</span>, (max, p) -&gt; max &gt; p.getSalary() ? max : p.getSalary(), (x, y) -&gt; x &gt; y ? x : y);</span><br><span class="line">System.out.println(max2);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-6收集-collect"><a href="#3-6收集-collect" class="headerlink" title="3.6收集(collect)"></a>3.6收集(collect)</h3><p><code>collect</code> ,收集,可以说是内容繁多,功能最丰富的部分了,从字面上理解,就是把一个流收集起来,最终可以收集成一个值也可以手机恒一个新的集合.</p>
+<blockquote>
+<p><code>collect</code>主要依赖<code>java.unil.stream.Collectors</code>类内置的静态方法.</p>
+</blockquote>
+<h4 id="3-6-1归集-toSet-toList-toMap"><a href="#3-6-1归集-toSet-toList-toMap" class="headerlink" title="3.6.1归集(toSet,toList,toMap)"></a>3.6.1归集(toSet,toList,toMap)</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Persion&gt; persions = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;张三&quot;</span>, <span class="number">26</span>, <span class="number">8000</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;李四&quot;</span>, <span class="number">23</span>, <span class="number">7600</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;天津&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;王五&quot;</span>, <span class="number">43</span>, <span class="number">8409</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;北京&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;赵六&quot;</span>, <span class="number">26</span>, <span class="number">9872</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;上海&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;周八&quot;</span>, <span class="number">34</span>, <span class="number">6504</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line"><span class="comment">//获取所有的工资</span></span><br><span class="line">Set&lt;Integer&gt; salary = persions.stream().map(persion -&gt; persion.getSalary()).collect(Collectors.toSet());</span><br><span class="line"><span class="comment">//toMap</span></span><br><span class="line">Map&lt;Integer, String&gt; collect = persions.stream()</span><br><span class="line">        .filter(p -&gt; p.getSalary() &gt; <span class="number">8000</span>)</span><br><span class="line">        .collect(Collectors.toMap(Persion::getSalary,Persion::getName));</span><br><span class="line">System.out.println(collect);<span class="comment">//结果:&#123;9872=赵六, 8409=王五&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-6-2统计-count-averaging"><a href="#3-6-2统计-count-averaging" class="headerlink" title="3.6.2统计(count/averaging)"></a>3.6.2统计(count/averaging)</h4><p><code>Collectors</code>提供了一些列用于数据统计的静态方法;</p>
+<ul>
+<li>计数:<code>count</code></li>
+<li>平均值:<code>averagingInt</code>,<code>averagingLong</code>,<code>averagingDouble</code></li>
+<li>最值:<code>maxBy</code>,<code>minBy</code></li>
+<li>求和:<code>summingInt</code>,<code>summingLong</code>,<code>summingDouble</code></li>
+<li>统计以上所有:<code>summarizingInt</code>,<code>summarizingLong</code>,<code>summarizingDouble</code></li>
+</ul>
+<p><strong>案例:统计所有员工人数,平均工资,工资总额,最高工资</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Persion&gt; persions = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;张三&quot;</span>, <span class="number">26</span>, <span class="number">8000</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;李四&quot;</span>, <span class="number">23</span>, <span class="number">7600</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;天津&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;王五&quot;</span>, <span class="number">43</span>, <span class="number">8409</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;北京&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;赵六&quot;</span>, <span class="number">26</span>, <span class="number">9872</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;上海&quot;</span>));</span><br><span class="line">persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;周八&quot;</span>, <span class="number">34</span>, <span class="number">6504</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line"><span class="comment">//员工人数</span></span><br><span class="line"><span class="keyword">long</span> count = persions.stream().count();</span><br><span class="line">System.out.println(<span class="string">&quot;员工人数: &quot;</span> + count);</span><br><span class="line"><span class="comment">//平均工资</span></span><br><span class="line">Double collect = persions.stream().collect(Collectors.averagingDouble(Persion::getSalary));</span><br><span class="line">System.out.println(<span class="string">&quot;平均工资: &quot;</span>+collect);</span><br><span class="line"><span class="comment">//最高工资</span></span><br><span class="line">Optional&lt;Integer&gt; max = persions.stream().map(persion -&gt; persion.getSalary()).max(Integer::compareTo);</span><br><span class="line">System.out.println(<span class="string">&quot;最高工资: &quot;</span>+max.get());</span><br><span class="line"><span class="comment">//工资之和</span></span><br><span class="line">Integer collect1 = persions.stream().collect(Collectors.summingInt(Persion::getSalary));</span><br><span class="line">System.out.println(<span class="string">&quot;工资之和: &quot;</span>+collect1);</span><br><span class="line"><span class="comment">//一次性统计所有信息</span></span><br><span class="line">DoubleSummaryStatistics collect2 = persions.stream().collect(Collectors.summarizingDouble(Persion::getSalary));</span><br><span class="line">System.out.println(<span class="string">&quot;一次性统计所有信息: &quot;</span>+collect2);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">员工人数: <span class="number">5</span></span><br><span class="line">平均工资: <span class="number">8077.0</span></span><br><span class="line">最高工资: <span class="number">9872</span></span><br><span class="line">工资之和: <span class="number">40385</span></span><br><span class="line">一次性统计所有信息: DoubleSummaryStatistics&#123;count=<span class="number">5</span>, sum=<span class="number">40385.000000</span>, min=<span class="number">6504.000000</span>, average=<span class="number">8077.000000</span>, max=<span class="number">9872.000000</span>&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-6-3分组-groupingBy"><a href="#3-6-3分组-groupingBy" class="headerlink" title="3.6.3分组(groupingBy)"></a>3.6.3分组(groupingBy)</h4><ul>
+<li>分区:将<code>stream</code>按条件分为两个<code>map</code>,比如员工按薪资是否高于8000分为两个部分</li>
+<li>分组:将集合分为多个<code>Map</code>,比如员工按性别分组,有单级分组和多级分组</li>
+</ul>
+<p><img src="https://img-blog.csdnimg.cn/20201109145807450.png#pic_left" alt="在这里插入图片描述"></p>
+<p><strong>案例:将员工按薪资是否高于8000分为两个部分;将员工按性别和地区分组</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//将员工按照薪资8000进行分组</span></span><br><span class="line">Map&lt;Boolean, List&lt;Persion&gt;&gt; collect = persions.stream().collect(Collectors.partitioningBy(persion -&gt; persion.getSalary() &gt; <span class="number">8000</span>));</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//结果输出</span></span><br><span class="line">&#123;<span class="keyword">false</span>=[Persion&#123;name=<span class="string">&#x27;张三&#x27;</span>, age=<span class="number">26</span>, salary=<span class="number">8000</span>, gender=<span class="string">&#x27;男&#x27;</span>, area=<span class="string">&#x27;广州&#x27;</span>&#125;, Persion&#123;name=<span class="string">&#x27;李四&#x27;</span>, age=<span class="number">23</span>, salary=<span class="number">7600</span>, gender=<span class="string">&#x27;女&#x27;</span>, area=<span class="string">&#x27;天津&#x27;</span>&#125;, Persion&#123;name=<span class="string">&#x27;周八&#x27;</span>, age=<span class="number">34</span>, salary=<span class="number">6504</span>, gender=<span class="string">&#x27;男&#x27;</span>, area=<span class="string">&#x27;广州&#x27;</span>&#125;], </span><br><span class="line"> <span class="keyword">true</span>=[Persion&#123;name=<span class="string">&#x27;王五&#x27;</span>, age=<span class="number">43</span>, salary=<span class="number">8409</span>, gender=<span class="string">&#x27;男&#x27;</span>, area=<span class="string">&#x27;北京&#x27;</span>&#125;, Persion&#123;name=<span class="string">&#x27;赵六&#x27;</span>, age=<span class="number">26</span>, salary=<span class="number">9872</span>, gender=<span class="string">&#x27;女&#x27;</span>, area=<span class="string">&#x27;上海&#x27;</span>&#125;]&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//按照员工的性别和地区进行分组</span></span><br><span class="line">Map&lt;String, Map&lt;String, List&lt;Persion&gt;&gt;&gt; collect1 = persions.stream().collect(Collectors.groupingBy(persion -&gt; persion.getGender(),</span><br><span class="line">        Collectors.groupingBy(persion-&gt;persion.getArea())));</span><br><span class="line">System.out.println(collect1);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//结果输出</span></span><br><span class="line">&#123;女=&#123;上海=[Persion&#123;name=<span class="string">&#x27;赵六&#x27;</span>, age=<span class="number">26</span>, salary=<span class="number">9872</span>, gender=<span class="string">&#x27;女&#x27;</span>, area=<span class="string">&#x27;上海&#x27;</span>&#125;], 天津=[Persion&#123;name=<span class="string">&#x27;李四&#x27;</span>, age=<span class="number">23</span>, salary=<span class="number">7600</span>, gender=<span class="string">&#x27;女&#x27;</span>, area=<span class="string">&#x27;天津&#x27;</span>&#125;]&#125;, 男=&#123;广州=[Persion&#123;name=<span class="string">&#x27;张三&#x27;</span>, age=<span class="number">26</span>, salary=<span class="number">8000</span>, gender=<span class="string">&#x27;男&#x27;</span>, area=<span class="string">&#x27;广州&#x27;</span>&#125;, Persion&#123;name=<span class="string">&#x27;周八&#x27;</span>, age=<span class="number">34</span>, salary=<span class="number">6504</span>, gender=<span class="string">&#x27;男&#x27;</span>, area=<span class="string">&#x27;广州&#x27;</span>&#125;], 北京=[Persion&#123;name=<span class="string">&#x27;王五&#x27;</span>, age=<span class="number">43</span>, salary=<span class="number">8409</span>, gender=<span class="string">&#x27;男&#x27;</span>, area=<span class="string">&#x27;北京&#x27;</span>&#125;]&#125;&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-6-4接合-joining"><a href="#3-6-4接合-joining" class="headerlink" title="3.6.4接合(joining)"></a>3.6.4接合(joining)</h4><p><code>joining</code>可以将<code>stream</code>中元素用特定的连接符(没有的话,则直接连接)连接成一个字符串</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">//将员工的名字连接成一个字符串</span></span><br><span class="line"> List&lt;String&gt; names = persions.stream().map(persion -&gt;  persion.getName()).collect(Collectors.toList());</span><br><span class="line"> String nameStr = names.stream().collect(Collectors.joining(<span class="string">&quot;-&quot;</span>));</span><br><span class="line"> System.out.println(nameStr);</span><br><span class="line"><span class="comment">//打印结果: 张三-李四-王五-赵六-周八</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="3-6-5归约-reducing"><a href="#3-6-5归约-reducing" class="headerlink" title="3.6.5归约(reducing)"></a>3.6.5归约(reducing)</h4><p><code>Collectors</code>类提供的<code>reducing</code>方法,相比于<code>stream</code>本身的<code>reduce</code>方法,增加了对自定义归约的支持.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Integer sum = persions.stream().collect(Collectors.reducing(<span class="number">0</span>, Persion::getSalary, Integer::sum));</span><br><span class="line">System.out.println(sum);</span><br><span class="line"><span class="comment">//stream的reduce</span></span><br><span class="line">Integer sum = persions.stream().map(Persion::getSalary).reduce(<span class="number">0</span>, Integer::sum);</span><br><span class="line"></span><br><span class="line">BigDecimal reduce = bigDecimals.stream().reduce(BigDecimal.ZERO, BigDecimal::add);</span><br><span class="line">System.out.println(reduce);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-7排序-sorted"><a href="#3-7排序-sorted" class="headerlink" title="3.7排序(sorted)"></a>3.7排序(sorted)</h3><p><code>sorted</code>中间操作,有两种排序:</p>
+<ul>
+<li><code>sorted()</code>:自然排序,流中元素需实现<code>Comparable</code>接口</li>
+<li><code>sorted(Comparator com)</code>:<code>Compatator</code>自定义排序</li>
+</ul>
+<p><strong>案例:将员工工资由高到低(工资一样则按年龄有大到小排序)</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> List&lt;Persion&gt; persions = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"> persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;张三&quot;</span>, <span class="number">26</span>, <span class="number">8000</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line"> persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;李四&quot;</span>, <span class="number">23</span>, <span class="number">7600</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;天津&quot;</span>));</span><br><span class="line"> persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;王五&quot;</span>, <span class="number">43</span>, <span class="number">8409</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;北京&quot;</span>));</span><br><span class="line"> persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;赵六&quot;</span>, <span class="number">40</span>, <span class="number">8000</span>, <span class="string">&quot;女&quot;</span>, <span class="string">&quot;上海&quot;</span>));</span><br><span class="line"> persions.add(<span class="keyword">new</span> Persion(<span class="string">&quot;周八&quot;</span>, <span class="number">34</span>, <span class="number">6504</span>, <span class="string">&quot;男&quot;</span>, <span class="string">&quot;广州&quot;</span>));</span><br><span class="line"><span class="comment">//将员工按照薪水高低进行排序(薪资一样,按照年龄排)</span></span><br><span class="line">List&lt;Persion&gt; collect = persions.stream().sorted(Comparator.comparingInt(Persion::getSalary).thenComparing(Persion::getAge)).collect(Collectors.toList());</span><br><span class="line">System.out.println(collect);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[Persion&#123;name=<span class="string">&#x27;周八&#x27;</span>, age=<span class="number">34</span>, salary=<span class="number">6504</span>, gender=<span class="string">&#x27;男&#x27;</span>, area=<span class="string">&#x27;广州&#x27;</span>&#125;, Persion&#123;name=<span class="string">&#x27;李四&#x27;</span>, age=<span class="number">23</span>, salary=<span class="number">7600</span>, gender=<span class="string">&#x27;女&#x27;</span>, area=<span class="string">&#x27;天津&#x27;</span>&#125;, Persion&#123;name=<span class="string">&#x27;张三&#x27;</span>, age=<span class="number">26</span>, salary=<span class="number">8000</span>, gender=<span class="string">&#x27;男&#x27;</span>, area=<span class="string">&#x27;广州&#x27;</span>&#125;, Persion&#123;name=<span class="string">&#x27;赵六&#x27;</span>, age=<span class="number">40</span>, salary=<span class="number">8000</span>, gender=<span class="string">&#x27;女&#x27;</span>, area=<span class="string">&#x27;上海&#x27;</span>&#125;, Persion&#123;name=<span class="string">&#x27;王五&#x27;</span>, age=<span class="number">43</span>, salary=<span class="number">8409</span>, gender=<span class="string">&#x27;男&#x27;</span>, area=<span class="string">&#x27;北京&#x27;</span>&#125;]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-8提取-组合"><a href="#3-8提取-组合" class="headerlink" title="3.8提取/组合"></a>3.8提取/组合</h3><p>流也可以进行合并,去重,限制,跳过等操作</p>
+<p><img src="https://img-blog.csdnimg.cn/20201109150012790.jpg" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201109150001270.jpg" alt="在这里插入图片描述"></p>
+<p><img src="https://img-blog.csdnimg.cn/20201109145946301.jpg" alt="在这里插入图片描述"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> String[] str1 = &#123;<span class="string">&quot;A&quot;</span>, <span class="string">&quot;B&quot;</span>, <span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>&#125;;</span><br><span class="line"> String[] str2 = &#123;<span class="string">&quot;C&quot;</span>, <span class="string">&quot;D&quot;</span>, <span class="string">&quot;E&quot;</span>, <span class="string">&quot;F&quot;</span>&#125;;</span><br><span class="line"> Stream&lt;String&gt; stream1 = Stream.of(str1);</span><br><span class="line"> Stream&lt;String&gt; stream2 = Stream.of(str2);</span><br><span class="line">  <span class="comment">//合并流</span></span><br><span class="line"> List&lt;String&gt; collect1 = Stream.concat(stream1, stream2).collect(Collectors.toList());</span><br><span class="line"> System.out.println(collect1);</span><br><span class="line"><span class="comment">//[A, B, C, D, C, D, E, F]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//去重</span></span><br><span class="line">List&lt;String&gt; collect2 = Stream.concat(stream1, stream2).distinct().collect(Collectors.toList());</span><br><span class="line">System.out.println(collect2);</span><br><span class="line"><span class="comment">//[A, B, C, D, E, F]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//限制流</span></span><br><span class="line">List&lt;Integer&gt; collect1 = Stream.iterate(<span class="number">1</span>, x -&gt; x + <span class="number">3</span>).limit(<span class="number">3</span>).collect(Collectors.toList());</span><br><span class="line">System.out.println(collect1);</span><br><span class="line"><span class="comment">//[1, 4, 7]</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//跳过前n个数据</span></span><br><span class="line">List&lt;Integer&gt; collect3 = Stream.iterate(<span class="number">1</span>, x -&gt; x + <span class="number">3</span>).skip(<span class="number">3</span>).limit(<span class="number">10</span>).collect(Collectors.toList());</span><br><span class="line">System.out.println(collect3);</span><br><span class="line"><span class="comment">//[10, 13, 16, 19, 22, 25, 28, 31, 34, 37]</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-Stream源码解读"><a href="#4-Stream源码解读" class="headerlink" title="4.Stream源码解读"></a>4.Stream源码解读</h2><p><strong>想要了解源码,首先要了解这些类是什么</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">BiConsumer.java</span><br><span class="line">BiFunction.java</span><br><span class="line">BinaryOperator.java</span><br><span class="line">BiPredicate.java</span><br><span class="line">BooleanSupplier.java</span><br><span class="line">Consumer.java</span><br><span class="line">DoubleBinaryOperator.java</span><br><span class="line">DoubleConsumer.java</span><br><span class="line">DoubleFunction.java</span><br><span class="line">DoublePredicate.java</span><br><span class="line">DoubleSupplier.java</span><br><span class="line">DoubleToIntFunction.java</span><br><span class="line">DoubleToLongFunction.java</span><br><span class="line">DoubleUnaryOperator.java</span><br><span class="line">Function.java</span><br><span class="line">IntBinaryOperator.java</span><br><span class="line">IntConsumer.java</span><br><span class="line">IntFunction.java</span><br><span class="line">IntPredicate.java</span><br><span class="line">IntSupplier.java</span><br><span class="line">IntToDoubleFunction.java</span><br><span class="line">IntToLongFunction.java</span><br><span class="line">IntUnaryOperator.java</span><br><span class="line">LongBinaryOperator.java</span><br><span class="line">LongConsumer.java</span><br><span class="line">LongFunction.java</span><br><span class="line">LongPredicate.java</span><br><span class="line">LongSupplier.java</span><br><span class="line">LongToDoubleFunction.java</span><br><span class="line">LongToIntFunction.java</span><br><span class="line">LongUnaryOperator.java</span><br><span class="line">ObjDoubleConsumer.java</span><br><span class="line">ObjIntConsumer.java</span><br><span class="line">ObjLongConsumer.java</span><br><span class="line"><span class="keyword">package</span>-info.java</span><br><span class="line">Predicate.java</span><br><span class="line">Supplier.java</span><br><span class="line">ToDoubleBiFunction.java</span><br><span class="line">ToDoubleFunction.java</span><br><span class="line">ToIntBiFunction.java</span><br><span class="line">ToIntFunction.java</span><br><span class="line">ToLongBiFunction.java</span><br><span class="line">ToLongFunction.java</span><br><span class="line">UnaryOperator.java</span><br></pre></td></tr></table></figure>
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/12/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%A3%85%E9%A5%B0%E5%99%A8%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1287,220 +1539,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/20/centos%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="冯玮">
-      <meta itemprop="description" content="以梦为马，明日天涯">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="冯玮的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/20/centos%E8%99%9A%E6%8B%9F%E6%9C%BA%E5%AE%89%E8%A3%85/" class="post-title-link" itemprop="url">centos虚拟机安装</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-10-20 15:06:52 / 修改时间：15:09:30" itemprop="dateCreated datePublished" datetime="2020-10-20T15:06:52+08:00">2020-10-20</time>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="一、CentOS7-4下载"><a href="#一、CentOS7-4下载" class="headerlink" title="一、CentOS7.4下载"></a>一、CentOS7.4下载</h3><p>​     官网下载地址：<a target="_blank" rel="noopener" href="http://vault.centos.org/">http://vault.centos.org/</a></p>
-<p>  1、进入CentOS下载官网，找到CentOS7.4版本</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112161239784.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p> 2、在CentOS7.4版本页面中，找到isos/</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112161503341.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>  3、进入页面后，可以看到x86_64</p>
-<p><img src="https://img-blog.csdnimg.cn/2018111216180736.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p> 4、在CentOS下载页面中，选择 CentOS-7-x86_64-DVD-1708.torrent进行下载</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112162307215.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>5、下载完成之后，由于“CentOS-7-x86_64-DVD-1708.torrent”只是一个BT种子文件，而且非常小，这就需要我们使用迅雷等工具来对源镜像进行下载了</p>
-<p>  （1）打开迅雷，新建任务，把“CentOS-7-x86_64-DVD-1708.torrent”BT种子文件拖入到新建任务中，并点击立即下载</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112162942853.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>  （2）下载完成之后会生成如下的几个文件，CentOS-7-x86_64-DVD-1708.iso就是我们在工作中使用的镜像了</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112163208507.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<h3 id="二、CentOS7-4安装"><a href="#二、CentOS7-4安装" class="headerlink" title="二、CentOS7.4安装"></a>二、CentOS7.4安装</h3><p>  1、打开你的VMware Workstation Pro，并点击“创建新的虚拟机”，没有安装VMware Workstation Pro请点击<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39135287/article/details/82924547">VMware Workstation 14下载与安装</a></p>
-<p><img src="https://img-blog.csdnimg.cn/20181112163425986.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>2、点选典型(推荐)(T)，并点击“下一步”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112163607593.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>3、点选稍后安装操作系统(S)，并点击“下一步”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112163858190.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>4、点选Linux(L)，因为我们之前下载的 CentOS-7-x86_64-DVD-1708.iso 是64位 7.4版本的，所以这里我们选择CentOS 7 64位，并点击“下一步”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112164504835.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>5、虚拟机名称可以更改也可以不更改看自己需求，修改虚拟机的安装路径，并点击“下一步”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112165100926.jpg?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>6、磁盘选择默认为20.0GB，点选将虚拟磁盘存储为单个文件(O)，并点击“下一步”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112170051641.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>7、点击“完成”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112170232395.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>8、点击“编辑虚拟机设置”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112170724106.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>9、点选“使用ISO映像文件(M)”，并添加我们之前下载好的CentOS-7-x86_64-DVD-1708.iso</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112171601333.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>10、默认为NAT 模式(N)：用于共享主机的IP地址即可</p>
-<p><img src="https://img-blog.csdnimg.cn/20200229110353396.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>提示：11-13步骤 移除USB控制器、声卡和打印机 只是为了腾出更多的资源空间 (可以选择跳过 不移除)</p>
-<p>11、选择USB 控制器，并点击“移除(R)”</p>
-<p><img src="https://img-blog.csdnimg.cn/20200229110601994.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>12、选择声卡，并点击“移除(R)”</p>
-<p><img src="https://img-blog.csdnimg.cn/20200229110744352.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>13、选择打印机，并点击“移除(R)”，最后点击“确定”</p>
-<p><img src="https://img-blog.csdnimg.cn/20200229110954940.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>14、点击“开启此虚拟机”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112173512558.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>15、正在开启虚拟机，鼠标移入到虚拟机中，并按下“↑”键，选择Install CentOS 7，最后按下“Enter 键”</p>
-<p>​    提示： 鼠标移动到虚拟机内部单击或者按下Ctrl + G，鼠标即可移入到虚拟机中</p>
-<p>​           按下Ctrl + Alt，鼠标即可移出虚拟机</p>
-<p>​    注意： 在虚拟机中的操作，鼠标必须要移入到虚拟机中，否则虚拟机感应不到，无法对其进行操作</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112174017753.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>16、按下“Enter 键”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112174532637.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p><img src="https://img-blog.csdnimg.cn/20181112174720796.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>17、默认安装过程中的安装界面使用English (英语)，点击“Continue”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112175459759.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>18、配置时区 (DATE &amp; TIME)</p>
-<p>​    （1）选择DATE &amp; TIME</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112181108477.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>​    </p>
-<p>​    （2）时区设置为 Region：Asia  City：Shanghai</p>
-<p>​        日期和时间 设置与自己的电脑时间同步，最后点击“Done”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112180745997.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>19、设置软件选择 (SOFTWARE SELECTION)</p>
-<p>​     （1）选择SOFTWARE SELECTION</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112182226669.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>​    </p>
-<p>​    （2）点击勾选 Compatibility Libraries 和 Development Tools</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112182812677.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>如果希望安装带有界面的CentOS，请在左边Base Environment中，选择Server with GUI(带图形用户界面的服务器)，默认为Minimal Install (最小安装)，提示：如果安装有界面版本的，在如下的第22步骤中的操作会有所不同 (安装有界面版本的其实用处不大，都是可以通过命令行来设置的)，这里我没有安装有界面版本的</p>
-<p><img src="https://img-blog.csdnimg.cn/20200229113355475.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>20、设置安装位置 (INSTALLATION DESTINATION)</p>
-<p>   （1）选择INSTALLATION DESTINATION</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112184330599.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>  （2）点选 I will configuire parttioning，然后再点击“Done”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112184709136.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p> （3）更改模式，标准分区Standard Partition，点击“+”按钮添加分区</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112185430852.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>（4）添加 /boot分区，大小300MB，Add mount point</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112185658156.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p><img src="https://img-blog.csdnimg.cn/2018111218572297.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>（5）添加 swap分区，一般情况是物理内存的2倍大小，用于物理内存不足时使用，但可能造成系统不稳定，所以看情况，可以设置小一点，甚至设置为0MB，这里我设置为512MB，Add mount point</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112190216274.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p><img src="https://img-blog.csdnimg.cn/201811121902269.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>（6）增加根分区，不填写大小，即默认剩余的空间都给根分区，Add mount point</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112190725296.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p><img src="https://img-blog.csdnimg.cn/20181112190734886.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>（7）点击“Done”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112190941821.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>（8）点击“Accept Changes”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112191203212.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>21、点击“Begin Installation”，开始安装</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112191554323.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>22、设置系统用户root的密码 (ROOT PASSWORD)</p>
-<p>  （1）选择ROOT PASSWORD</p>
-<p><img src="https://img-blog.csdnimg.cn/2018111219203432.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>（2）为root设置密码 (密码长度最好不要小于6位数)，然后点击“Done”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112192438774.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>23、等待安装完成，然后点击“Reboot”</p>
-<p><img src="https://img-blog.csdnimg.cn/20181112193200108.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<h3 id="三、CentOS7-4基本设置"><a href="#三、CentOS7-4基本设置" class="headerlink" title="三、CentOS7.4基本设置"></a>三、CentOS7.4基本设置</h3><p><strong>1、登录CentOS，默认账号为root，密码为 你在前面安装时设置的root密码</strong></p>
-<p><strong>提示：在输入密码时，linux为了安全起见，是看不到你输入的密码。同时，如果是使用的是键盘右边的数字键盘输入密码的话，建议查看一下，数字键盘是否开启 (建议使用字母按键上面一排的 数字键输入密码)</strong></p>
-<p><img src="https://img-blog.csdnimg.cn/20200229122603642.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p><strong>2、配置IP地址，网关</strong></p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/sysconfig/network-scripts/    //进入到network-scripts目录下  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">vi ifcfg-ens32  //编辑配置文件 </span><br><span class="line"></span><br><span class="line">//修改以下内容</span><br><span class="line"></span><br><span class="line">BOOTPROTO=static  //启用静态IP地址</span><br><span class="line">ONBOOT=yes      //开启自动启用网络连接</span><br><span class="line"></span><br><span class="line">//添加以下内容</span><br><span class="line">IPADDR=192.168.30.1      //设置IP地址</span><br><span class="line">NETMASK=255.255.255.0   //子网掩码</span><br><span class="line">GATEWAY=192.168.131.2   //设置网关</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img-blog.csdnimg.cn/20200229123200521.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p><img src="https://img-blog.csdnimg.cn/20200229123856473.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>2.1、如何设置Linux的IP地址</p>
-<p>1、在本地电脑打开“命令行窗口”，输入命令ipconfig，查看 以太网适配器 VMware Network Adapter VMnet8下的IPv4 地址</p>
-<p>2、可以看到 以太网适配器 VMware Network Adapter VMnet8下的IPv4 地址为 192.168.30.2</p>
-<p>3、当我们设置Linux的IP地址时，需要保证Linux的IP地址 与 VMnet8下的IPv4地址 的前面三位数必须相同，即 192.168.30 必须相同，这样Linux就能跟我们本地电脑互相通信，最后一位数不相同即可，例如Linux的IP地址可以设置为192.168.30.1 或者 192.168.30.124等</p>
-<p><img src="https://img-blog.csdnimg.cn/20190824182436514.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>2.2、如何设置Linux的网关：</p>
-<p>1、点击编辑(E) → 虚拟网络编辑器(N)</p>
-<p><img src="https://img-blog.csdnimg.cn/20181114180316562.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p> 2.3、如何设置Linux的网关，选择VMnet8，再点击”NAT设置”按钮，查看VMnet8 (NAT 模式)下的子网掩码</p>
-<p><img src="https://img-blog.csdnimg.cn/20181114180631782.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p><img src="https://img-blog.csdnimg.cn/20190824183728116.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>3、查看VMnet8 (NAT 模式)下的网关，选择VMnet8，再点击”NAT设置”按钮</p>
-<p><img src="https://img-blog.csdnimg.cn/20181114181049708.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>3、重启网络服务</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service network restart</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img-blog.csdnimg.cn/20181112224709932.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>4、设置DNS地址   </p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/resolv.conf    //编辑 resolv.conf文件</span><br><span class="line"></span><br><span class="line">nameserver 114.114.114.114   //添加DNS地址</span><br><span class="line"></span><br><span class="line">可以添加多个DNS地址，格式为：</span><br><span class="line">nameserver xxx1.xxx1.xxx1.xxx1</span><br><span class="line">nameserver xxx2.xxx2.xxx2.xxx2</span><br><span class="line">常用的DNS地址:</span><br><span class="line"> 阿里  223.5.5.5  或者  223.6.6.6</span><br><span class="line"> 谷歌  8.8.8.8</span><br><span class="line"> 国内移动、电信和联通通用的DNS  114.114.114.114</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img-blog.csdnimg.cn/20181112230257536.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>提示：如果是内网，配置上面的DNS地址有可能是访问不了外网的，在电脑右下角的网络图标中鼠标右键，选择打开”网络和Internet”设置，选择WLAN，然后在点击你连接的网络，查看网络信息</p>
-<p><img src="https://img-blog.csdnimg.cn/20200229130402386.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>填写内网的IPv4 DNS 服务器地址即可</p>
-<p><img src="https://img-blog.csdnimg.cn/20200229130655666.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>5、查看是否能够访问外网</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ping -c3 www.baidu.com</span><br><span class="line"></span><br><span class="line">PING www.a.shifen.com (14.215.177.38) 56(84) bytes of data.</span><br><span class="line"></span><br><span class="line">64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=1 ttl=128 time=9.45 ms</span><br><span class="line">64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=2 ttl=128 time=12.2 ms</span><br><span class="line">64 bytes from 14.215.177.38 (14.215.177.38): icmp_seq=3 ttl=128 time=9.29 ms</span><br><span class="line"></span><br><span class="line">--- www.a.shifen.com ping statistics ---</span><br><span class="line"></span><br><span class="line">3 packets transmitted, 3 received, 0% packet loss, time 2004ms</span><br><span class="line"></span><br><span class="line">rtt min/avg/max/mdev = 9.296/10.346/12.293/1.388 ms</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img-blog.csdnimg.cn/20200229125417688.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>6、永久关闭 firewalld防火墙（centos7默认的防火墙是firewalld防火墙，不是使用iptables，因此需要关闭firewalld服务）</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service  // 停止firewalld服务</span><br><span class="line">systemctl <span class="built_in">disable</span> firewalld.service // 开机禁用firewalld服务</span><br><span class="line">iptables -L   //列出所有iptables规则</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img-blog.csdnimg.cn/20181113001448743.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>7、永久关闭SELinux防火墙</p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/sysconfig/selinux       //编辑selinux文件</span><br><span class="line">SELINUX=disabled         //把文件中的SELINUX=enforcing 改成 SELINUX=disabled 即可</span><br><span class="line">sestatus    //查看SELinux状态</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img-blog.csdnimg.cn/20181114102457122.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>获取当前selinux防火墙的安全策略</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sestatus</span><br></pre></td></tr></table></figure>
-
-<p>可以看到当前selinux防火墙的安全策略仍为enforcing，配置文件并未生效</p>
-<p><img src="https://img-blog.csdnimg.cn/20181114104958342.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>这时需要我们重启，再去查看SELinux防火墙的状态，可以看到已经关闭了</p>
-<p><img src="https://img-blog.csdnimg.cn/2018111411401675.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>8、给/etc/rc.d/rc.local 文件设置 “x”可执行权限，最初设置默认是没有可执行权限的</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">chmod +x /etc/rc.d/rc.local     //设置可执行权限</span><br><span class="line"></span><br><span class="line">//设置前</span><br><span class="line">-rwxr-xr--. 1 root root 473 Aug  5  2017 rc.local</span><br><span class="line">//设置后</span><br><span class="line">-rwxr-xr-x. 1 root root 473 Aug  5  2017 rc.local</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://img-blog.csdnimg.cn/20181113003426734.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p>9、输入“halt”，关闭虚拟机，并拍摄快照，保存当前配置</p>
-<p><img src="https://img-blog.csdnimg.cn/20181113001706140.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-<p><img src="https://img-blog.csdnimg.cn/20181113001901947.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzM5MTM1Mjg3,size_16,color_FFFFFF,t_70" alt="img"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1569,12 +1607,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
