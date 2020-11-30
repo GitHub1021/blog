@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Spring Security1. spring Security 介绍官网介绍Spring Security  Spring Security is a powerful and highly customizable authentication and access-control framework. It is the de-facto standard for securing Spr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Security(一)">
+<meta property="og:url" content="http://example.com/2020/11/30/Spring-Security-%E4%B8%80/index.html">
+<meta property="og:site_name" content="冯玮的博客">
+<meta property="og:description" content="Spring Security1. spring Security 介绍官网介绍Spring Security  Spring Security is a powerful and highly customizable authentication and access-control framework. It is the de-facto standard for securing Spr">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:/Users/fengwei/AppData/Roaming/Typora/typora-user-images/image-20201130101547227.png">
+<meta property="og:image" content="c:/Users/fengwei/AppData/Roaming/Typora/typora-user-images/image-20201130105608197.png">
+<meta property="article:published_time" content="2020-11-30T08:18:36.000Z">
+<meta property="article:modified_time" content="2020-11-30T08:19:24.081Z">
+<meta property="article:author" content="冯玮">
+<meta property="article:tag" content="Spring Security">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:/Users/fengwei/AppData/Roaming/Typora/typora-user-images/image-20201130101547227.png">
+
+<link rel="canonical" href="http://example.com/2020/11/30/Spring-Security-%E4%B8%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Spring Security(一) | 冯玮的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">冯玮的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">码农</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-主页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>主页</a>
+
+  </li>
+        <li class="menu-item menu-item-主题">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>主题</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/30/Spring-Security-%E4%B8%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="冯玮">
+      <meta itemprop="description" content="以梦为马，明日天涯">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="冯玮的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Spring Security(一)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-11-30 16:18:36 / 修改时间：16:19:24" itemprop="dateCreated datePublished" datetime="2020-11-30T16:18:36+08:00">2020-11-30</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Spring-Security"><a href="#Spring-Security" class="headerlink" title="Spring Security"></a>Spring Security</h1><h2 id="1-spring-Security-介绍"><a href="#1-spring-Security-介绍" class="headerlink" title="1. spring Security 介绍"></a>1. spring Security 介绍</h2><p><strong>官网介绍<a target="_blank" rel="noopener" href="https://spring.io/projects/spring-security">Spring Security</a></strong></p>
+<blockquote>
+<p>Spring Security is a powerful and highly customizable authentication and access-control framework. It is the de-facto standard for securing Spring-based applications.</p>
+<p>Spring Security is a framework that focuses on providing both authentication and authorization to Java applications. Like all Spring projects, the real power of Spring Security is found in how easily it can be extended to meet custom requirements</p>
+<h2 id="Features"><a href="#Features" class="headerlink" title="Features"></a>Features</h2><ul>
+<li>Comprehensive and extensible support for both Authentication and Authorization</li>
+<li>Protection against attacks like session fixation, clickjacking, cross site request forgery, etc</li>
+<li>Servlet API integration</li>
+<li>Optional integration with Spring Web MVC</li>
+<li>Much more…</li>
+</ul>
+</blockquote>
+<p>大致意思:</p>
+<blockquote>
+<p>Spring Security 是一个功能强大且高度可定制的身份验证和访问控制框架。它是保护基于弹簧的应用的实际标准。</p>
+<p>Spring Security 是一个框架，它侧重于为 Java 应用程序提供身份验证和授权。与所有春季项目一样，Spring Security 的真正力量也存在于如何轻松扩展以满足自定义要求方面</p>
+<h2 id="特征"><a href="#特征" class="headerlink" title="特征"></a>特征</h2><ul>
+<li>对身份验证和授权的全面且可扩展的支持</li>
+<li>防止会话固定、点击劫持、跨站点请求伪造等攻击</li>
+<li>服务 API 集成</li>
+<li>可选与弹簧 Web MVC 集成</li>
+<li>更多…</li>
+</ul>
+</blockquote>
+<p>Spring Security以前叫做acegi,时候来才成为Spring的一个子项目,也是目前最为流行的一个安全权限管理框架,它与spring紧密结合在一起.</p>
+<p>对于一个权限管理框架而言,无论是Shiro还是Spring Security ,最核心的功能无非就是两方面:</p>
+<ul>
+<li>认证</li>
+<li>授权</li>
+</ul>
+<p>通俗一点说,认证就是我们常说的登录,授权就是权限鉴别,看看请求是否具备相应的权限.</p>
+<p>Spring Security 支持多种不同的认证方式,这些认证方式有的是Spring Security 自己提供的认证功能,有的是第三方标准组织制订的,主要有如下一些:</p>
+<p>一些比较常见的认证方式:</p>
+<ul>
+<li>HTTP BASIC authentication headers：基于IETF RFC 标准。</li>
+<li>HTTP Digest authentication headers：基于IETF RFC 标准。</li>
+<li>HTTP X.509 client certificate exchange：基于IETF RFC 标准。</li>
+<li>LDAP：跨平台身份验证。</li>
+<li>Form-based authentication：基于表单的身份验证。</li>
+<li>Run-as authentication：用户用户临时以某一个身份登录。</li>
+<li>OpenID authentication：去中心化认证。</li>
+</ul>
+<p>除了这些常见的认证方式之外,一些比较冷门的认证方式,Spring Security 也提供了支持</p>
+<ul>
+<li>Jasig Central Authentication Service：单点登录。</li>
+<li>Automatic “remember-me” authentication：记住我登录（允许一些非敏感操作）。</li>
+<li>Anonymous authentication：匿名登录。</li>
+</ul>
+<p>作为一个开放的平台,Spring Security提供的认证机制不仅仅是上面这些,如果上面这些认证机制依然满足不了你的需求,我们也可以自己定制认证逻辑,当我们需要和一些”老破旧”的系统进行集成时,自定义认证逻辑就显得非常重要了,除了认证,剩下的就是授权了</p>
+<p>Spring Security支持基于URL的请求授权,支持方法访问授权以及对象访问授权 </p>
+<h2 id="2-创建Spring-Security项目"><a href="#2-创建Spring-Security项目" class="headerlink" title="2. 创建Spring  Security项目"></a>2. 创建Spring  Security项目</h2><h3 id="1-新建项目"><a href="#1-新建项目" class="headerlink" title="1.新建项目"></a>1.新建项目</h3><p>首先创建一个Springboot项目,创建时引入SpringSecurity依赖和web依赖如下:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.security<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-security-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>创建成功后,我们添加一个测试的<code>HelloController</code>,内容如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/hello&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;hello&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动项目,启动项目过程中,我们会看到一行日志:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Using generated security password: c196c586-bc2d-<span class="number">47f</span>9-a73a-<span class="number">5426f</span>b3a5c4c</span><br></pre></td></tr></table></figure>
+
+<p>这个就是SpringSecurity 为默认用户<code>user</code> 生成的临时密码,是一个UUID字符串.接下来我们去访问</p>
+<p><a target="_blank" rel="noopener" href="http://localhost:8080/login">http://localhost:8080/login</a> ,会重定向到这个页面</p>
+<p><img src="C:\Users\fengwei\AppData\Roaming\Typora\typora-user-images\image-20201130101547227.png" alt="image-20201130101547227"></p>
+<p>在登录页面,使用默认的用户名<code>user</code>,默认的登录密码就是项目启动的时候控制台打印出来的密码,输入用户名密码之后,就显示登录成功了,登录成功后,我们就可以访问到<code>/hello</code>接口了</p>
+<p>在spring security中,默认的登录页面和的路入口都是<code>/login</code>只不过一个是<code>get</code>(登录页面)请求,另一个是<code>post</code>请求(登录接口)</p>
+<p>以上就是springsecurity的一个简单的使用介绍,使用起来还是很简单的,并且一个依赖就保护了所有的接口</p>
+<p>到这里就是想知道,为什么说临时生成的密码是UUID?</p>
+<p>看源码中,<code>UserDetailsServiceAutoConfiguration</code> 和用户相关的自动化配置类中,在该类的<code>getOrDeducePassword</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> String <span class="title">getOrDeducePassword</span><span class="params">(User user, PasswordEncoder encoder)</span> </span>&#123;</span><br><span class="line">       String password = user.getPassword();</span><br><span class="line">       <span class="keyword">if</span> (user.isPasswordGenerated()) &#123;</span><br><span class="line">           logger.info(String.format(<span class="string">&quot;%n%nUsing generated security password: %s%n&quot;</span>, user.getPassword()));</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       <span class="keyword">return</span> encoder == <span class="keyword">null</span> &amp;&amp; !PASSWORD_ALGORITHM_PATTERN.matcher(password).matches() ? <span class="string">&quot;&#123;noop&#125;&quot;</span> + password : password;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<p>在控制台中我们看到的日志,就是这句话打印出来的,所以得知<code>user.isPasswordGenerated()</code>返回的是<code>true</code></p>
+<p>在User的类中我们发现(部分代码):</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> String name = <span class="string">&quot;user&quot;</span>;</span><br><span class="line">        <span class="keyword">private</span> String password = UUID.randomUUID().toString();</span><br><span class="line">        <span class="keyword">private</span> List&lt;String&gt; roles = <span class="keyword">new</span> ArrayList();</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">boolean</span> passwordGenerated = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line">    	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从上面的代码中,可以看到,默认的用户名就是user,默认的密码则是UUID,而默认情况下,<code>passwordGenerated</code>也是true.</p>
+<h3 id="2-用户配置"><a href="#2-用户配置" class="headerlink" title="2.用户配置"></a>2.用户配置</h3><p>使用默认密码在代码上很好实现,但是每次重新启动都是新的密码,这对用户来说很不方便,在正式使用数据库连接之前,先介绍两种非主流的用户名/密码配置方案</p>
+<h4 id="2-1-配置文件"><a href="#2-1-配置文件" class="headerlink" title="2.1 配置文件"></a>2.1 配置文件</h4><p>我们可以再<code>application.properties</code>中配置默认的用户名密码</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.security.user.name</span>=<span class="string">user01</span></span><br><span class="line"><span class="meta">spring.security.user.password</span>=<span class="string">123</span></span><br></pre></td></tr></table></figure>
+
+<p>以上就是我们新定义的用户名和密码</p>
+<p>在<code>properites</code>中定义的用户名和密码最终是通过set方法注入到属性中去的,这里我们顺便来看下,<code>SecurityProperties.User setPassword</code>方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setPassword</span><span class="params">(String password)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (StringUtils.hasLength(password)) &#123;</span><br><span class="line">                <span class="keyword">this</span>.passwordGenerated = <span class="keyword">false</span>;</span><br><span class="line">                <span class="keyword">this</span>.password = password;</span><br><span class="line">            &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从这里我们可以看到<code>,application.properties</code>中定义的密码在注入进来之后,还顺便设置了<code>passwordGenerated =false</code>,这个属性设置为<code>false</code>之后,控制台就不会打印默认的密码了,此时重启之后就可以使用自己定义的用户名和密码登录了</p>
+<h4 id="2-2-配置类"><a href="#2-2-配置类" class="headerlink" title="2.2 配置类"></a>2.2 配置类</h4><p>除了上面的配置文件的方式以外,还可以在配置类中配置用户名/密码,在配置类中配置,我们就要指定<code>PasswordEncoder了</code>,这是一个非常关键的东西</p>
+<p>密码加密我们一般会用到散列函数，又称散列算法、哈希函数，这是一种从任何数据中创建数字“指纹”的方法。散列函数把消息或数据压缩成摘要，使得数据量变小，将数据的格式固定下来，然后将数据打乱混合，重新创建一个散列值。散列值通常用一个短的随机字母和数字组成的字符串来代表。好的散列函数在输入域中很少出现散列冲突。在散列表和数据处理中，不抑制冲突来区别数据，会使得数据库记录更难找到。我们常用的散列函数有 MD5 消息摘要算法、安全散列算法（Secure Hash Algorithm）。</p>
+<p>但是仅仅使用散列函数还不够，为了增加密码的安全性，一般在密码加密过程中还需要加盐，所谓的盐可以是一个随机数也可以是用户名，加盐之后，即使密码明文相同的用户生成的密码密文也不相同，这可以极大的提高密码的安全性。但是传统的加盐方式需要在数据库中有专门的字段来记录盐值，这个字段可能是用户名字段（因为用户名唯一），也可能是一个专门记录盐值的字段，这样的配置比较繁琐。</p>
+<p>Spring Security 提供了多种密码加密方案，官方推荐使用 <code>BCryptPasswordEncoder</code>，<code>BCryptPasswordEncoder</code> 使用 <code>BCrypt</code> 强哈希函数，开发者在使用时可以选择提供 <code>strength</code> 和 <code>SecureRandom</code> 实例。strength 越大，密钥的迭代次数越多，密钥迭代次数为 2^strength。strength 取值在 4~31 之间，默认为 10。</p>
+<p><code>PasswordEncoder</code>这个接口定义了三个方法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">PasswordEncoder</span> </span>&#123;</span><br><span class="line">    <span class="function">String <span class="title">encode</span><span class="params">(CharSequence var1)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(CharSequence var1, String var2)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">default</span> <span class="keyword">boolean</span> <span class="title">upgradeEncoding</span><span class="params">(String encodedPassword)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>encode 方法用来对明文密码进行加密,返回加密之后的密文</li>
+<li>matches 方法是一个密码校对方法,在用户登录的时候,将用户传来的明文密码和数据库中保存的密文密码作为参数,传入到这个方法中去,根据返回的Boolean值判断用户密码是否输入正确.</li>
+<li><code>upgradeEncoding</code> 是否还要进行再次加密,这一一般来说就不用了</li>
+</ul>
+<p>通过下图,我们可以看到<code>PasswordEncoder</code> 的实现类</p>
+<p><img src="C:\Users\fengwei\AppData\Roaming\Typora\typora-user-images\image-20201130105608197.png" alt="image-20201130105608197"></p>
+<p>配置:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SecurityConfig</span> <span class="keyword">extends</span> <span class="title">WebSecurityConfigurerAdapter</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function">PasswordEncoder <span class="title">passwordEncoder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> NoOpPasswordEncoder.getInstance();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(AuthenticationManagerBuilder auth)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        auth.inMemoryAuthentication()</span><br><span class="line">                .withUser(<span class="string">&quot;User01&quot;</span>)</span><br><span class="line">                .password(<span class="string">&quot;123&quot;</span>).roles(<span class="string">&quot;admin&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>首先我们自定义<code>SecyrityConfig</code>继承<code>WebSecurityConfigAdapter</code>,重写里边的<code>configure</code>方法</p>
+</li>
+<li><p>我们需要提供一个<code>PasswordEncoder</code>的实例,因为目前的案例还比较单单,因此我们暂时下不给密码加密,所以返回<code>NoOpPasswordEncoder</code>的实例即可</p>
+</li>
+<li><p>configure中我们通过<code>inMemoryAuthentication</code>来开启在内存中定义用户,<code>withUser</code>中是用户名,password是密码.roles中是用户角色</p>
+</li>
+<li><p>如果配置多个用户,用and相连</p>
+<p>为什么用<code>and</code>相连?</p>
+<blockquote>
+<p>没有 Spring Boot 的时候，我们都是 SSM 中使用 Spring Security，这种时候都是在 XML 文件中配置 Spring Security，既然是 XML 文件，标签就有开始有结束，现在的 and 符号相当于就是 XML 标签的结束符，表示结束当前标签，这是个时候上下文会回到 <code>inMemoryAuthentication </code>方法中，然后开启新用户的配置。</p>
+</blockquote>
+<p>配置完成后,再次启动项目,java代码中的配置会覆盖掉xml文件中的配置,此时再去访问<code>/hello</code>接口,就会发现只有java代码中的用户名/密码才能访问成功</p>
+</li>
+</ol>
+<h3 id="3-自定义表单登录页"><a href="#3-自定义表单登录页" class="headerlink" title="3. 自定义表单登录页"></a>3. 自定义表单登录页</h3><p>自定义一个登录页面:</p>
+<h4 id="3-1-服务端定义"><a href="#3-1-服务端定义" class="headerlink" title="3.1 服务端定义"></a>3.1 服务端定义</h4><p>然后接下来我们继续完善前面的SecurityConfig类,继续重写它的configure(WebSecurity web) 和configure(HttpSecurity http) 方法,如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(WebSecurity web)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    web.ignoring().antMatchers(<span class="string">&quot;/js/**&quot;</span>, <span class="string">&quot;/css/**&quot;</span>, <span class="string">&quot;images/**&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    http.authorizeRequests()</span><br><span class="line">            .anyRequest().authenticated()</span><br><span class="line">            .and()</span><br><span class="line">            .formLogin()</span><br><span class="line">            .loginPage(<span class="string">&quot;/login/html&quot;</span>)</span><br><span class="line">            .permitAll()</span><br><span class="line">            .and()</span><br><span class="line">            .csrf().disable();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><code>web.ignoring() </code>用来忽略掉的URL地址,一般对于静态文件,我们可以采用此 操作</li>
+<li>如果我们使用XML来配置<code>SpringSecurity</code>,里面会有一个重要的标签,<http>,<code>HttpSecurity</code>提供的配置方法都对应了该标签</li>
+<li><code>authorizeResquests</code>对应了<intercept-url></li>
+<li><code>formLogin</code>对应了<formlogin></li>
+<li><code>and</code>方法标识结束当前标签,上下文回到<code>HttpSecurity</code>,开启新一轮的配置</li>
+<li><code>permitAll</code>标识登录相关的页面/接口不要拦截</li>
+<li>最后记得关闭<code>crsf</code>,关于<code>crsf</code>问题到后门会有详细解释</li>
+</ol>
+<p>当我们定义了登录的页面为<code>/login.html</code>的时候,SpringSecurity也会帮助我们自动注册一个/login.html的接口,这个接口是<code>POST</code>请求.用来处理登录逻辑</p>
+<h4 id="3-2-前端定义"><a href="#3-2-前端定义" class="headerlink" title="3.2 前端定义"></a>3.2 前端定义</h4><p>我们将登录页面的相关静态文件放到springboot项目的resources/static目录下:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;box&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;title&quot;</span>&gt;</span>登录<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/login.html&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;input&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;name&quot;</span>&gt;</span>用户名<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">id</span>=<span class="string">&quot;name&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;spin&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;input&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;pass&quot;</span>&gt;</span>密码<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;password&quot;</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">id</span>=<span class="string">&quot;pass&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;spin&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button login&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">span</span>&gt;</span>登录<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-check&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;javascript:&quot;</span> <span class="attr">class</span>=<span class="string">&quot;pass-forgot&quot;</span>&gt;</span>忘记密码？<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>form表单中,注意action为<code>/login.html</code>,配置完成此时重启再去访问,都会定向到我们定义的这个页面上来,输入用户名密码就可以登录了</p>
+<h4 id="3-3登录参数"><a href="#3-3登录参数" class="headerlink" title="3.3登录参数"></a>3.3登录参数</h4><p>默认的登录参数是<code>username</code>,<code>password</code>,注意默认情况下,这个不能变, </p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/login.html&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">id</span>=<span class="string">&quot;name&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;password&quot;</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">id</span>=<span class="string">&quot;pass&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">span</span>&gt;</span>登录<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code> FormLoginConfigurer</code> 类中，在它的构造方法中，我们可以看到有两个配置用户名密码的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FormLoginConfigurer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">super</span>(<span class="keyword">new</span> UsernamePasswordAuthenticationFilter(), <span class="keyword">null</span>);</span><br><span class="line">	usernameParameter(<span class="string">&quot;username&quot;</span>);</span><br><span class="line">	passwordParameter(<span class="string">&quot;password&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这里，首先<code>super</code>调用了父类的构造方法，传入了 <code>UsernamePasswordAuthenticationFilter </code>实例，该实例将被赋值给父类的 <code>authFilter</code> 属性。</p>
+<p>接下来<code>usernameParameter</code>方法如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> FormLoginConfigurer&lt;H&gt; <span class="title">usernameParameter</span><span class="params">(String usernameParameter)</span> </span>&#123;</span><br><span class="line">		getAuthenticationFilter().setUsernameParameter(usernameParameter);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的设置,当登录请求从浏览器来到服务端之后,我们要从请求的<code>HttpServelRequest</code>中取出来用户的登录用户名和登录密码,怎么取呢?还是在UsernamePasswordAuthenticationFilter类中,有如下两个方法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> String <span class="title">obtainUsername</span><span class="params">(HttpServletRequest request)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> request.getParameter(<span class="keyword">this</span>.usernameParameter);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> String <span class="title">obtainPassword</span><span class="params">(HttpServletRequest request)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> request.getParameter(<span class="keyword">this</span>.passwordParameter);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到,这个时候,就用到默认配置的username和password了,</p>
+<p>当然这两个参数我们也可以自己配置,自己配置的方式如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.and()</span><br><span class="line">.formLogin()</span><br><span class="line">.loginPage(<span class="string">&quot;/login.html&quot;</span>)</span><br><span class="line">.loginProcessingUrl(<span class="string">&quot;/doLogin&quot;</span>)</span><br><span class="line">.usernameParameter(<span class="string">&quot;name&quot;</span>)</span><br><span class="line">.passwordParameter(<span class="string">&quot;passwd&quot;</span>)</span><br><span class="line">.permitAll()</span><br><span class="line">.and()</span><br></pre></td></tr></table></figure>
+
+<p>配置完成后记得修改一下前端页面:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;/doLogin&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;input&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;name&quot;</span>&gt;</span>用户名<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">id</span>=<span class="string">&quot;name&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;spin&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;input&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;pass&quot;</span>&gt;</span>密码<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;password&quot;</span> <span class="attr">name</span>=<span class="string">&quot;passwd&quot;</span> <span class="attr">id</span>=<span class="string">&quot;pass&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">&quot;spin&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;button login&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>登录<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">i</span> <span class="attr">class</span>=<span class="string">&quot;fa fa-check&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">i</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意修改input的name属性值和服务端的对应</p>
+<h4 id="3-4-登录回调"><a href="#3-4-登录回调" class="headerlink" title="3.4 登录回调"></a>3.4 登录回调</h4><p>在登陆成功之后,我们就要分情况处理了,大体上来说,无非就是分为两种情况:</p>
+<ul>
+<li>前后端分离登录</li>
+<li>前后端不分登录</li>
+</ul>
+<p>两种情况的处理方式不一样,本文我们先来第二种前后不分的登录</p>
+<p>在<code>SpringSecurity</code>中,和登录成功重定向的URL相关的方法有两个:</p>
+<ul>
+<li><code>defaultSuccessUrl</code></li>
+<li><code>successForwardUrl</code></li>
+</ul>
+<p>我们在实际配置的时候,只需要配置一个即可,具体配置哪个,要看你的需求,两个的区别如下:</p>
+<ol>
+<li><code>defaultSuccessUrl </code>有一个重载的方法，我们先说一个参数的 <code>defaultSuccessUrl</code> 方法。如果我们在<code> defaultSuccessUrl</code> 中指定登录成功的跳转页面为 <code>/index</code>，此时分两种情况，如果你是直接在浏览器中输入的登录地址，登录成功后，就直接跳转到 <code>/index</code>，如果你是在浏览器中输入了其他地址，例如 <code>http://localhost:8080/hello</code>，结果因为没有登录，又重定向到登录页面，此时登录成功后，就不会来到 <code>/index</code> ，而是来到 <code>/hello</code> 页面。</li>
+<li><code>defaultSuccessUrl</code> 还有一个重载的方法，第二个参数如果不设置默认为 false，也就是我们上面的的情况，如果手动设置第二个参数为 true，则 <code>defaultSuccessUrl</code> 的效果和 <code>successForwardUrl </code>一致。</li>
+<li><code>successForwardUrl </code>表示不管你是从哪里来的，登录后一律跳转到<code> successForwardUrl</code> 指定的地址。例如 <code>successForwardUrl </code>指定的地址为 <code>/index</code> ，你在浏览器地址栏输入 <code>http://localhost:8080/hello</code>，结果因为没有登录，重定向到登录页面，当你登录成功之后，就会服务端跳转到 <code>/index</code> 页面；或者你直接就在浏览器输入了登录页面地址，登录成功后也是来到 <code>/index</code>。</li>
+</ol>
+<p>相关配置如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.and()</span><br><span class="line">.formLogin()</span><br><span class="line">.loginPage(<span class="string">&quot;/login.html&quot;</span>)</span><br><span class="line">.loginProcessingUrl(<span class="string">&quot;/doLogin&quot;</span>)</span><br><span class="line">.usernameParameter(<span class="string">&quot;name&quot;</span>)</span><br><span class="line">.passwordParameter(<span class="string">&quot;passwd&quot;</span>)</span><br><span class="line">.defaultSuccessUrl(<span class="string">&quot;/index&quot;</span>)</span><br><span class="line">.successForwardUrl(<span class="string">&quot;/index&quot;</span>)</span><br><span class="line">.permitAll()</span><br><span class="line">.and()</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>注意:实际操作中,<code>defaultSuccessUrl</code>和<code>successForwardUrl</code>只需要配置一个即可</strong></p>
+<h4 id="3-5-登录失败回调"><a href="#3-5-登录失败回调" class="headerlink" title="3.5 登录失败回调"></a>3.5 登录失败回调</h4><p>与登录成功相似,登录失败也是两个方法:</p>
+<ul>
+<li><code>failureForeardUrl</code></li>
+<li><code>failureUrl</code></li>
+</ul>
+<p>这两个方法在设置的时候也是设置一个即可,<code>failForwardUrl</code>是登录失败之后会发生服务端跳转,<code>failureUrl</code>则在登录失败之后,会发生重定向</p>
+<h4 id="3-6-注销登录"><a href="#3-6-注销登录" class="headerlink" title="3.6 注销登录"></a>3.6 注销登录</h4><p>注销登录的默认接口是<code>/logout</code>,我们也可以配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.and()</span><br><span class="line">.logout()</span><br><span class="line">.logoutUrl(<span class="string">&quot;/logout&quot;</span>)</span><br><span class="line">.logoutRequestMatcher(<span class="keyword">new</span> AntPathRequestMatcher(<span class="string">&quot;/logout&quot;</span>,<span class="string">&quot;POST&quot;</span>))</span><br><span class="line">.logoutSuccessUrl(<span class="string">&quot;/index&quot;</span>)</span><br><span class="line">.deleteCookies()</span><br><span class="line">.clearAuthentication(<span class="keyword">true</span>)</span><br><span class="line">.invalidateHttpSession(<span class="keyword">true</span>)</span><br><span class="line">.permitAll()</span><br><span class="line">.and()</span><br></pre></td></tr></table></figure>
+
+<p>注销登录的配置我来说一下：</p>
+<ol>
+<li>默认注销的 URL 是 <code>/logout</code>，是一个 GET 请求，我们可以通过<code>logoutUrl</code>方法来修改默认的注销 URL。</li>
+<li><code>logoutRequestMatcher</code> 方法不仅可以修改注销 URL，还可以修改请求方式，实际项目中，这个方法和 <code>logoutUrl </code>任意设置一个即可。</li>
+<li><code>logoutSuccessUrl </code>表示注销成功后要跳转的页面。</li>
+<li><code>deleteCookies</code> 用来清除 cookie。</li>
+<li><code>clearAuthentication</code> 和<code>invalidateHttpSession</code>分别表示清除认证信息和使<code>HttpSession</code>失效，默认可以不用配置，默认就会清除。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Security/" rel="tag"># Spring Security</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/26/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F-%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F/" rel="prev" title="设计模式-责任链模式">
+      <i class="fa fa-chevron-left"></i> 设计模式-责任链模式
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Security"><span class="nav-number">1.</span> <span class="nav-text">Spring Security</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-spring-Security-%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">1. spring Security 介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Features"><span class="nav-number">1.2.</span> <span class="nav-text">Features</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E5%BE%81"><span class="nav-number">1.3.</span> <span class="nav-text">特征</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%9B%E5%BB%BASpring-Security%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.4.</span> <span class="nav-text">2. 创建Spring  Security项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%96%B0%E5%BB%BA%E9%A1%B9%E7%9B%AE"><span class="nav-number">1.4.1.</span> <span class="nav-text">1.新建项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%94%A8%E6%88%B7%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.2.</span> <span class="nav-text">2.用户配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">2.1 配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-%E9%85%8D%E7%BD%AE%E7%B1%BB"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">2.2 配置类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%87%AA%E5%AE%9A%E4%B9%89%E8%A1%A8%E5%8D%95%E7%99%BB%E5%BD%95%E9%A1%B5"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. 自定义表单登录页</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%AE%9A%E4%B9%89"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">3.1 服务端定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-%E5%89%8D%E7%AB%AF%E5%AE%9A%E4%B9%89"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">3.2 前端定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3%E7%99%BB%E5%BD%95%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">3.3登录参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-%E7%99%BB%E5%BD%95%E5%9B%9E%E8%B0%83"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">3.4 登录回调</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-%E7%99%BB%E5%BD%95%E5%A4%B1%E8%B4%A5%E5%9B%9E%E8%B0%83"><span class="nav-number">1.4.3.5.</span> <span class="nav-text">3.5 登录失败回调</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-%E6%B3%A8%E9%94%80%E7%99%BB%E5%BD%95"><span class="nav-number">1.4.3.6.</span> <span class="nav-text">3.6 注销登录</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">冯玮</p>
+  <div class="site-description" itemprop="description">以梦为马，明日天涯</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">16</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">冯玮</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
